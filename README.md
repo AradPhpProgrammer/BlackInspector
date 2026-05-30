@@ -52,10 +52,10 @@ BlackInspect is a powerful **Tampermonkey userscript** that adds a full-featured
 
 ## 📁 Repository Structure
 
-BlackInspect/
-├── BlackInspector.js ← The userscript
-├── README.md ← You are here
-└── (optional) main.py ← Python kernel file
+BlackInspect/ <br/>
+├── BlackInspector.js ← The userscript <br/>
+├── README.md ← You are here <br/>
+└── (optional) main.py ← Python kernel file <br/>
 
 ---
 
