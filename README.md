@@ -34,7 +34,7 @@ BlackInspect is a powerful **Tampermonkey userscript** that adds a full-featured
    - [Chrome / Edge](https://chromewebstore.google.com/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo)
    - [Firefox](https://addons.mozilla.org/en-US/firefox/addon/tampermonkey/)
 2. Click the Tampermonkey icon → **Create a new script...**.
-3. Delete the default template and **paste the entire content** of `BlackInspect.user.js` (provided in this repository).
+3. Delete the default template and **paste the entire content** of `BlackInspector.js` (provided in this repository).
 4. Press `Ctrl+S` (or `File` → `Save`) to install.
 5. The script will automatically run on every website you visit. A ⚙ button will appear at the bottom‑right corner; click it to open the panel.
 
@@ -53,7 +53,7 @@ BlackInspect is a powerful **Tampermonkey userscript** that adds a full-featured
 ## 📁 Repository Structure
 
 BlackInspect/
-├── BlackInspect.user.js ← The userscript
+├── BlackInspector.js ← The userscript
 ├── README.md ← You are here
 └── (optional) main.py ← Python kernel file
 
@@ -81,7 +81,7 @@ This project is licensed under the **MIT License** – you are free to use, modi
    - [کروم / Edge](https://chromewebstore.google.com/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo)
    - [فایرفاکس](https://addons.mozilla.org/en-US/firefox/addon/tampermonkey/)
 2. روی آیکون Tampermonkey کلیک کرده و **Create a new script...** را انتخاب کنید.
-3. کد موجود در فایل `BlackInspect.user.js` را به‌طور کامل جای‌گذاری کنید.
+3. کد موجود در فایل `BlackInspector.js` را به‌طور کامل جای‌گذاری کنید.
 4. با `Ctrl+S` (یا File → Save) ذخیره کنید.
 5. اکنون اسکریپت روی هر سایتی فعال خواهد بود. یک دکمه ⚙ در گوشه پایین سمت راست ظاهر می‌شود؛ با کلیک روی آن پنل ابزارها باز می‌شود.
 
