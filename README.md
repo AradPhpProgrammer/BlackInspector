@@ -6,11 +6,11 @@
 
 ---
 
-## 🚀 Overview
+### 🚀 Overview
 
 BlackInspect is a powerful **Tampermonkey userscript** that adds a full-featured inspection, spoofing, and hacking toolset directly into any webpage. It gives you a floating panel with 13 tabs covering everything from network info to canvas fingerprint spoofing, XSS injection, password management, and even a split‑view AI launcher.
 
-### 🔍 What can you do?
+## 🔍 What can you do?
 
 - **Info** – View server, IP, protocol, page metadata, links count, response headers.
 - **Vars** – Scan and export global JavaScript variables.
