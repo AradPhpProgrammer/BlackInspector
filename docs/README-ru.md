@@ -104,7 +104,7 @@ chmod +x run.sh
 
 🎥 **Смотрите полное руководство на YouTube:**
 
-[![BlackInspect Tutorial](https://img.shields.io/badge/YouTube-Смотреть%20туториал-red?logo=youtube&style=for-the-badge)](https://youtube.com/@AradPhpProgrammer)
+[![BlackInspect Tutorial](https://img.shields.io/badge/YouTube-Смотреть%20туториал-red?logo=youtube&style=for-the-badge)](https://youtube.com/@QcoTools)
 
 ---
 
@@ -140,7 +140,7 @@ fastapi, uvicorn, cryptography, aiohttp, dnspython, psutil, pypdf, pdfplumber, r
 
 **AradPhpProgrammer**
 - GitHub: [@AradPhpProgrammer](https://github.com/AradPhpProgrammer)
-- YouTube: [AradPhpProgrammer](https://youtube.com/@AradPhpProgrammer)
+- YouTube: [AradPhpProgrammer](https://youtube.com/@QcoTools)
 
 ---
 
