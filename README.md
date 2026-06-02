@@ -3,6 +3,7 @@
 <p align="right" dir="rtl">
   <strong>فارسی</strong> – برای راهنمای نصب و توضیحات به فارسی، <a href="#راهنمای-فارسی">اینجا کلیک کنید</a>.
 </p>
+> 📺 **Video Tutorial:** For a quick walkthrough and feature overview, [watch the YouTube tutorial](https://youtu.be/9yHs8vvqxdQ).
 
 ---
 
@@ -70,6 +71,7 @@ Pull requests are welcome! If you find a bug or have a feature request, please o
 This project is licensed under the **MIT License** – you are free to use, modify, and distribute it.
 
 ---
+> 📺 **آموزش ویدیویی:** برای آشنایی سریع و مشاهده قابلیت‌های پروژه، [این آموزش یوتیوب را ببینید](https://youtu.be/9yHs8vvqxdQ).
 
 <h1 id="راهنمای-فارسی">🇮🇷 راهنمای فارسی</h1>
 
