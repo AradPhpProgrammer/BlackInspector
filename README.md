@@ -104,7 +104,7 @@ chmod +x run.sh
 
 🎥 **Watch the complete tutorial on YouTube:**
 
-[![BlackInspect Tutorial](https://img.shields.io/badge/YouTube-Watch%20Tutorial-red?logo=youtube&style=for-the-badge)](https://youtube.com/@AradPhpProgrammer)
+[![BlackInspect Tutorial](https://img.shields.io/badge/YouTube-Watch%20Tutorial-red?logo=youtube&style=for-the-badge)](https://youtube.com/@QcoTools)
 
 ---
 
@@ -140,7 +140,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 **AradPhpProgrammer**
 - GitHub: [@AradPhpProgrammer](https://github.com/AradPhpProgrammer)
-- YouTube: [AradPhpProgrammer](https://youtube.com/@AradPhpProgrammer)
+- YouTube: [AradPhpProgrammer](https://youtube.com/@QcoTools)
 
 ---
 
