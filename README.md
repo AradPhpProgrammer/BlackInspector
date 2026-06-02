@@ -1,4 +1,3 @@
-```markdown
 <div align="center">
 
 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Flag_of_Iran_%281964%E2%80%931980%29.svg/320px-Flag_of_Iran_%281964%E2%80%931980%29.svg.png" alt="Iran Flag" width="150">
@@ -162,4 +161,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 Made with ❤️ in Iran
 
 </div>
-```
+
