@@ -3,7 +3,8 @@
 <p align="right" dir="rtl">
   <strong>فارسی</strong> – برای راهنمای نصب و توضیحات به فارسی، <a href="#راهنمای-فارسی">اینجا کلیک کنید</a>.
 </p>
-> 📺 **Video Tutorial:** For a quick walkthrough and feature overview, [watch the YouTube tutorial](https://youtu.be/9yHs8vvqxdQ).
+
+> 📺 **Video Tutorial:** For a quick walkthrough, setup guide, and feature overview, [watch the YouTube tutorial](https://youtu.be/9yHs8vvqxdQ).
 
 ---
 
