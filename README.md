@@ -1,120 +1,165 @@
-# BlackInspect v6.1.3 Ultimate
+```markdown
+<div align="center">
 
-<p align="right" dir="rtl">
-  <strong>فارسی</strong> – برای راهنمای نصب و توضیحات به فارسی، <a href="#راهنمای-فارسی">اینجا کلیک کنید</a>.
-</p>
+<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Flag_of_Iran_%281964%E2%80%931980%29.svg/320px-Flag_of_Iran_%281964%E2%80%931980%29.svg.png" alt="Iran Flag" width="150">
 
----
+### [فارسی](#فارسی) | [Русский](#русский)
 
-## 🚀 Overview
+# BlackInspect v7.0
+**Advanced Browser Security & Testing Framework**
 
-BlackInspect is a powerful **Tampermonkey userscript** that adds a full-featured inspection, spoofing, and hacking toolset directly into any webpage. It gives you a floating panel with 13 tabs covering everything from network info to canvas fingerprint spoofing, XSS injection, password management, and even a split‑view AI launcher.
+[![Release](https://img.shields.io/github/v/release/AradPhpProgrammer/BlackInspector?color=blue)](https://github.com/AradPhpProgrammer/BlackInspector/releases)
+[![License](https://img.shields.io/github/license/AradPhpProgrammer/BlackInspector)](LICENSE)
+[![Python](https://img.shields.io/badge/Python-3.8+-green.svg)](https://python.org)
 
-### 🔍 What can you do?
-
-- **Info** – View server, IP, protocol, page metadata, links count, response headers.
-- **Vars** – Scan and export global JavaScript variables.
-- **Inject** – Run arbitrary JavaScript code.
-- **Spoof** – Fake your IP, User‑Agent, platform, and language, with a live request monitor.
-- **Pass** – Generate strong passwords, save them per domain, auto‑fill fake names/emails/phones.
-- **Storage** – View and set cookies / localStorage.
-- **Tools** – Break page restrictions (right‑click, copy, paste, etc.), download full page, copy all text, stop/resume loading, inject XSS payloads, reveal password fields, take full‑page screenshots, and open a split view with ChatGPT/DeepSeek/Gemini/Claude/Kimi.
-- **DOM** – Real‑time mutation observer.
-- **Canvas** – Toggle canvas spoofing to defeat fingerprinting.
-- **ModReq** – Intercept fetch requests and add custom headers.
-- **Sync** – Load profile settings from a remote URL.
-- **Safe** – Placeholder for future safe mode.
-- **Settings** – Choose language (English / Persian), set Python kernel path, default save filenames, and pick a folder for exporting files.
+</div>
 
 ---
 
-## 📦 Installation
+## 🚀 Quick Install
 
-1. Install the **Tampermonkey** extension for your browser:
-   - [Chrome / Edge](https://chromewebstore.google.com/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo)
-   - [Firefox](https://addons.mozilla.org/en-US/firefox/addon/tampermonkey/)
-2. Click the Tampermonkey icon → **Create a new script...**.
-3. Delete the default template and **paste the entire content** of `BlackInspect.user.js` (provided in this repository).
-4. Press `Ctrl+S` (or `File` → `Save`) to install.
-5. The script will automatically run on every website you visit. A ⚙ button will appear at the bottom‑right corner; click it to open the panel.
+> ⚠️ **Important:** 50% of extension features work **without Kernel**, but for full functionality, **Kernel must be running**.
 
----
+### Step 1: Install Python Kernel
 
-## 🎮 Usage
+**Windows:**
+```bash
+git clone https://github.com/AradPhpProgrammer/BlackInspector.git
+cd BlackInspector
+git checkout test-main
+run.bat
+```
 
-- The panel is draggable and resizable.
-- All settings are **saved automatically** in Tampermonkey's storage.
-- **Break restrictions** settings are **per‑domain** – you can break right‑click on one site without affecting others.
-- Use `Ctrl+Z` to reset the panel position to its default.
-- To save exported files (passwords, profiles, variables) directly to a folder, open **Settings** → **Pick save folder** (requires a browser that supports the File System Access API, e.g., Chrome).
+**Linux/Mac:**
+```bash
+git clone https://github.com/AradPhpProgrammer/BlackInspector.git
+cd BlackInspector
+git checkout test-main
+chmod +x run.sh
+./run.sh
+```
 
----
+### Step 2: Install Tampermonkey Script
 
-## 📁 Repository Structure
+1. Install [Tampermonkey](https://www.tampermonkey.net/) extension
+2. Open `BlackInspector.js` file
+3. Copy all content
+4. In Tampermonkey, click "Create a new script"
+5. Paste content and save
 
-BlackInspect/
-├── BlackInspect.user.js ← The userscript
-├── README.md ← You are here
-└── (optional) main.py ← Python kernel file
+### Step 3: Configure Connection
 
----
-
-## 🤝 Contributing
-
-Pull requests are welcome! If you find a bug or have a feature request, please open an issue.
-
----
-
-## 📜 License
-
-This project is licensed under the **MIT License** – you are free to use, modify, and distribute it.
+1. Open BlackInspect panel in browser (F12 > BlackInspect tab)
+2. Go to **Settings** tab
+3. Set Kernel URL to `http://localhost:5000` (or your custom port)
+4. Click "Test Connection"
 
 ---
 
-<h1 id="راهنمای-فارسی">🇮🇷 راهنمای فارسی</h1>
+## ✨ Features
 
-**BlackInspect** یک اسکریپت قدرتمند برای **Tampermonkey** است که یک مجموعه کامل از ابزارهای بازرسی، جعل هویت، شکستن محدودیت‌ها، مدیریت رمز عبور و … را در هر وب‌سایتی در اختیار شما می‌گذارد.
+### 🔐 Security Tools
+- **Directory Bruteforce**: Scan 70+ common paths (`/admin`, `/.env`, `/.git`)
+- **Subdomain Scanner**: DNS resolution with Subdomain Takeover detection
+- **XSS & SQLi Payloads**: Ready-to-use security testing payloads
+- **SSL Headers Analysis**: Check HSTS, CSP, X-Frame-Options, etc.
 
-### 📥 نصب
+### 🌐 Network Tools
+- **Auth Injection**: Auto-inject authentication tokens to all requests
+- **Request Modifier**: Modify URLs using Regex patterns
+- **Prevent Preflight**: Bypass CORS preflight requests
+- **Cookie Manager**: View, edit, and export cookies
 
-1. افزونه **Tampermonkey** را برای مرورگر خود نصب کنید:
-   - [کروم / Edge](https://chromewebstore.google.com/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo)
-   - [فایرفاکس](https://addons.mozilla.org/en-US/firefox/addon/tampermonkey/)
-2. روی آیکون Tampermonkey کلیک کرده و **Create a new script...** را انتخاب کنید.
-3. کد موجود در فایل `BlackInspect.user.js` را به‌طور کامل جای‌گذاری کنید.
-4. با `Ctrl+S` (یا File → Save) ذخیره کنید.
-5. اکنون اسکریپت روی هر سایتی فعال خواهد بود. یک دکمه ⚙ در گوشه پایین سمت راست ظاهر می‌شود؛ با کلیک روی آن پنل ابزارها باز می‌شود.
+### 📄 PDF Suite (Kernel Required)
+- Generate PDF from webpage
+- Extract text from PDF
+- Merge/Split PDF files
+- Compress PDF
+- Convert PDF to images
 
-### ⚙️ نحوه استفاده
+### 🎭 Anti-Detection
+- Canvas Spoofing
+- Tab Visibility Hiding
+- Extension Hiding
+- BuildID Spoofing
+- Anti-VM Detection
+- User-Agent Rotation
 
-- پنل قابل کشیدن و تغییر اندازه است.
-- تنظیمات به‌صورت خودکار ذخیره می‌شوند.
-- تنظیمات **شکستن محدودیت‌ها** برای **هر دامنه جداگانه** است.
-- با `Ctrl+Z` موقعیت پنل به حالت پیش‌فرض برمی‌گردد.
-- برای ذخیره فایل‌های خروجی (پسورد، پروفایل، متغیرها) در یک پوشه خاص، به **تنظیمات** → **انتخاب پوشه ذخیره** بروید (نیازمند مرورگری است که File System Access API را پشتیبانی کند، مثل کروم).
+### 🔑 Password Manager
+- Encrypted password storage (Fernet/PBKDF2)
+- Auto-fill credentials
+- Secure sync via Kernel
 
-### ✨ امکانات اصلی
+### ✅ Task Manager
+- To-Do list with secure storage
+- Task prioritization
+- Completion tracking
 
-- **اطلاعات**: مشاهده سرور، IP، هدرها، تعداد لینک‌ها و …
-- **متغیرها**: پویش و خروجی متغیرهای جاوااسکریپت.
-- **تزریق کد**: اجرای کد دلخواه.
-- **جعل هویت**: تغییر IP، User‑Agent، سیستم‌عامل و زبان با لاگ زنده درخواست‌ها.
-- **رمز**: تولید رمز قوی، ذخیره‌سازی به‌تفکیک دامنه، پر کردن خودکار نام/ایمیل/تلفن جعلی.
-- **ذخیره‌سازی**: مشاهده و تنظیم کوکی و localStorage.
-- **ابزارها**: شکستن محدودیت‌ها (راست‌کلیک، کپی، پیست و …)، دانلود کامل صفحه، کپی همه متن، توقف/ادامه بارگذاری، تزریق XSS، نمایش پسوردها، اسکرین‌شات تمام‌صفحه، نمایش دوگانه با ChatGPT و سایر AIها.
-- **DOM**: پایش تغییرات زنده DOM.
-- **بوم (Canvas)**: جعل اثر انگشت canvas برای جلوگیری از fingerprinting.
-- **ModReq**: افزودن هدرهای دلخواه به درخواست‌های fetch.
-- **همگام‌سازی**: بارگذاری پروفایل از یک URL.
-- **امن**: جایگاه قابلیت‌های آینده.
-- **تنظیمات**: تغییر زبان (انگلیسی / فارسی)، مسیر هسته پایتون، نام فایل‌های پیش‌فرض، انتخاب پوشه ذخیره.
+### 🎲 Fake Data Generator
+- Generate fake names, emails, phones
+- Auto-fill forms with fake data
+- Custom data templates
 
 ---
 
-## 🛠️ مشارکت
+## 📺 Tutorial
 
-مشارکت شما باعث بهبود این پروژه می‌شود. لطفاً مخزن را fork کرده و تغییرات خود را از طریق pull request ارسال کنید.
+🎥 **Watch the complete tutorial on YouTube:**
 
-## 📄 مجوز
+[![BlackInspect Tutorial](https://img.shields.io/badge/YouTube-Watch%20Tutorial-red?logo=youtube&style=for-the-badge)](https://youtube.com/@AradPhpProgrammer)
 
-این پروژه تحت مجوز **MIT** منتشر شده است.
+---
+
+## 📋 Requirements
+
+- Python 3.8 or higher
+- Modern web browser (Chrome, Firefox, Edge)
+- Tampermonkey extension
+- Internet connection
+
+### Python Dependencies
+```
+fastapi==0.109.0
+uvicorn==0.27.0
+cryptography==42.0.0
+aiohttp==3.9.1
+dnspython==2.5.0
+psutil==5.9.7
+pypdf==4.0.0
+pdfplumber==0.10.3
+reportlab==4.0.8
+pymupdf==1.23.8
+rich==13.7.0
+```
+
+---
+
+## 🛡️ Security Notice
+
+This tool is for **educational and authorized testing purposes only**. 
+Always ensure you have proper authorization before testing any website.
+
+---
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## 👨‍💻 Developer
+
+**AradPhpProgrammer**
+- GitHub: [@AradPhpProgrammer](https://github.com/AradPhpProgrammer)
+- YouTube: [AradPhpProgrammer](https://youtube.com/@AradPhpProgrammer)
+
+---
+
+<div align="center">
+
+**If you like this project, please ⭐ star the repository!**
+
+Made with ❤️ in Iran
+
+</div>
+```
