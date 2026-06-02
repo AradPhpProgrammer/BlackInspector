@@ -3,15 +3,14 @@
 <p align="right" dir="rtl">
   <strong>فارسی</strong> – برای راهنمای نصب و توضیحات به فارسی، <a href="#راهنمای-فارسی">اینجا کلیک کنید</a>.
 </p>
-> 📺 **Video Tutorial:** For a quick walkthrough and feature overview, [watch the YouTube tutorial](https://youtu.be/9yHs8vvqxdQ).
 
 ---
 
-### 🚀 Overview
+## 🚀 Overview
 
 BlackInspect is a powerful **Tampermonkey userscript** that adds a full-featured inspection, spoofing, and hacking toolset directly into any webpage. It gives you a floating panel with 13 tabs covering everything from network info to canvas fingerprint spoofing, XSS injection, password management, and even a split‑view AI launcher.
 
-## 🔍 What can you do?
+### 🔍 What can you do?
 
 - **Info** – View server, IP, protocol, page metadata, links count, response headers.
 - **Vars** – Scan and export global JavaScript variables.
@@ -35,7 +34,7 @@ BlackInspect is a powerful **Tampermonkey userscript** that adds a full-featured
    - [Chrome / Edge](https://chromewebstore.google.com/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo)
    - [Firefox](https://addons.mozilla.org/en-US/firefox/addon/tampermonkey/)
 2. Click the Tampermonkey icon → **Create a new script...**.
-3. Delete the default template and **paste the entire content** of `BlackInspector.js` (provided in this repository).
+3. Delete the default template and **paste the entire content** of `BlackInspect.user.js` (provided in this repository).
 4. Press `Ctrl+S` (or `File` → `Save`) to install.
 5. The script will automatically run on every website you visit. A ⚙ button will appear at the bottom‑right corner; click it to open the panel.
 
@@ -53,10 +52,10 @@ BlackInspect is a powerful **Tampermonkey userscript** that adds a full-featured
 
 ## 📁 Repository Structure
 
-BlackInspect/ <br/>
-├── BlackInspector.js ← The userscript <br/>
-├── README.md ← You are here <br/>
-└── (optional) main.py ← Python kernel file <br/>
+BlackInspect/
+├── BlackInspect.user.js ← The userscript
+├── README.md ← You are here
+└── (optional) main.py ← Python kernel file
 
 ---
 
@@ -71,7 +70,6 @@ Pull requests are welcome! If you find a bug or have a feature request, please o
 This project is licensed under the **MIT License** – you are free to use, modify, and distribute it.
 
 ---
-> 📺 **آموزش ویدیویی:** برای آشنایی سریع و مشاهده قابلیت‌های پروژه، [این آموزش یوتیوب را ببینید](https://youtu.be/9yHs8vvqxdQ).
 
 <h1 id="راهنمای-فارسی">🇮🇷 راهنمای فارسی</h1>
 
@@ -83,7 +81,7 @@ This project is licensed under the **MIT License** – you are free to use, modi
    - [کروم / Edge](https://chromewebstore.google.com/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo)
    - [فایرفاکس](https://addons.mozilla.org/en-US/firefox/addon/tampermonkey/)
 2. روی آیکون Tampermonkey کلیک کرده و **Create a new script...** را انتخاب کنید.
-3. کد موجود در فایل `BlackInspector.js` را به‌طور کامل جای‌گذاری کنید.
+3. کد موجود در فایل `BlackInspect.user.js` را به‌طور کامل جای‌گذاری کنید.
 4. با `Ctrl+S` (یا File → Save) ذخیره کنید.
 5. اکنون اسکریپت روی هر سایتی فعال خواهد بود. یک دکمه ⚙ در گوشه پایین سمت راست ظاهر می‌شود؛ با کلیک روی آن پنل ابزارها باز می‌شود.
 
