@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         BlackInspect v7.0 Ultimate
+// @name         BlackInspect v7.1 Ultimate
 // @namespace    http://tampermonkey.net/
 // @version      7.1.0
 // @description  Full inspection & spoofing suite — PDF reader+cracker, Security scanner, Todo+notify, Anti-VM, FPS, Auth injection, Preflight prevention, Vazir font, Panel opacity, Popup panel, Custom right-click, Subdomain takeover, Directory BF, and more.
