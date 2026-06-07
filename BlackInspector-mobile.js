@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BlackInspector Lite (موبایل)
 // @namespace    http://tampermonkey.net/
-// @version      7.0-lite
+// @version      7.1-lite
 // @description  نسخه سبک BlackInspector مخصوص موبایل - شکستن محدودیت‌ها و تب اسپوف
 // @author       AradPhpProgrammer
 // @match        *://*/*
