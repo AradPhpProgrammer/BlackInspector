@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         BlackInspect v7.1 Ultimate
+// @name         BlackInspect v7.0 Ultimate
 // @namespace    http://tampermonkey.net/
 // @version      7.1.0
 // @description  Full inspection & spoofing suite — PDF reader+cracker, Security scanner, Todo+notify, Anti-VM, FPS, Auth injection, Preflight prevention, Vazir font, Panel opacity, Popup panel, Custom right-click, Subdomain takeover, Directory BF, and more.
@@ -1244,76 +1244,269 @@
                 D.getElementById('antiVMToggle').onchange = function() { S.antiVM=this.checked; if(this.checked)applyAntiVM(); };
             }
 
-            // ---- Pass ----
+            // ---- Pass (LastPass-style) ----
             else if (tab === 'Pass') {
-                content.innerHTML = `
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-                <div class="bi-sec">
-                    <h4>🔐 ${_('Password Generator')}</h4>
-                    <label>${_('Length:')} <span id="lenVal">12</span></label>
-                    <input type="range" id="passLen" min="8" max="32" value="12" style="width:100%;accent-color:#007acc;" oninput="document.getElementById('lenVal').textContent=this.value">
-                    <label><input type="checkbox" id="incNum" checked> ${_('Numbers')}</label><br>
-                    <label><input type="checkbox" id="incUpper" checked> ${_('Uppercase')}</label><br>
-                    <label><input type="checkbox" id="incLower" checked> ${_('Lowercase')}</label><br>
-                    <label><input type="checkbox" id="incSpec"> ${_('Special')}</label><br>
-                    <button id="genPass" style="width:100%;background:#4d4d4d;color:#fff;margin-top:6px;">${_('Generate')}</button>
-                    <div style="margin-top:6px;font-size:11px;">${_('Generated:')} <b id="genOut" style="color:#007acc;word-break:break-all;"></b></div>
-                    <label><input type="checkbox" id="autoUser"> ${_('Auto-fill username/email')}</label>
-                    <button id="usePassBtn" style="width:100%;background:#4d4d4d;color:#fff;margin-top:6px;">🖊 ${_('Use Password')}</button>
-                    <div id="passMsg" style="margin-top:6px;font-size:11px;color:#6a9955;"></div>
-                    <hr style="border-color:#3e3e42;margin:8px 0;">
-                    <h4>👤 ${_('Fake Data')}</h4>
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;">
-                        <button id="fillName" style="background:#4d4d4d;color:#fff;">👤 ${_('Fill Name')}</button>
-                        <button id="fillEmail" style="background:#4d4d4d;color:#fff;">📧 ${_('Fill Email')}</button>
-                        <button id="fillPhone" style="background:#4d4d4d;color:#fff;">📞 ${_('Fill Phone')}</button>
-                        <button id="fillAll" style="background:#0e639c;color:#fff;">⚡ ${_('Fill All')}</button>
-                    </div>
-                    <div id="fakeOut" style="font-size:11px;color:#6a9955;margin-top:4px;"></div>
-                </div>
-                <div class="bi-sec">
-                    <h4>💾 ${_('Saved Passwords')}</h4>
-                    <input id="saveUser" placeholder="${_('Username')}" style="margin-bottom:4px;">
-                    <button id="saveEntry" style="width:100%;background:#4d4d4d;color:#fff;margin-bottom:8px;">${_('Save Current Password')}</button>
-                    <div id="savedList" style="max-height:160px;overflow-y:auto;font-size:11px;"></div>
-                    <div class="bi-row" style="margin-top:8px;">
-                        <button id="exportPass" style="flex:1;background:#4d4d4d;color:#fff;">📤 ${_('Export')}</button>
-                        <button id="importPass" style="flex:1;background:#4d4d4d;color:#fff;">📥 ${_('Import')}</button>
-                    </div>
-                    <input type="file" id="importPassFile" style="display:none" accept=".json">
-                    <div style="margin-top:8px;font-size:11px;color:#888;">${_('Default save path:')} ${S.passFile}</div>
-                </div>
-                </div>`;
-                const cs = {num:'0123456789',upper:'ABCDEFGHIJKLMNOPQRSTUVWXYZ',lower:'abcdefghijklmnopqrstuvwxyz',spec:'!@#$%^&*()_+-=[]{}|;:,.<>?'};
-                const genPass = () => { const len=parseInt(D.getElementById('passLen').value); let chars=''; if(D.getElementById('incNum').checked)chars+=cs.num; if(D.getElementById('incUpper').checked)chars+=cs.upper; if(D.getElementById('incLower').checked)chars+=cs.lower; if(D.getElementById('incSpec').checked)chars+=cs.spec; if(!chars)return''; let p=''; for(let i=0;i<len;i++)p+=chars[Math.floor(Math.random()*chars.length)]; return p; };
-                D.getElementById('genPass').onclick = () => D.getElementById('genOut').textContent = genPass();
-                const fnames=['Ali','Reza','Sara','Maryam','Mohammad','Fatemeh','Hossein','Zahra','Mehdi','Narges','Amir','Parisa'];
-                const emails=['test@example.com','user@mail.com','info@site.org'];
-                const phones=['09123456789','09351234567','09187654321'];
-                const rand = arr => arr[Math.floor(Math.random()*arr.length)];
-                const fillByAttr = (attr, val) => { let c=0; D.querySelectorAll('input:not([type=hidden])').forEach(inp=>{ const n=(inp.name||'').toLowerCase()+' '+(inp.id||'').toLowerCase()+' '+(inp.placeholder||'').toLowerCase(); if(n.includes(attr)){inp.value=val;inp.dispatchEvent(new Event('input',{bubbles:true}));c++;} }); return c; };
-                D.getElementById('fillName').onclick = () => { const c=fillByAttr('name',rand(fnames))+fillByAttr('first',rand(fnames))+fillByAttr('last',rand(fnames)); D.getElementById('fakeOut').textContent=`✅ ${c} ${_('fields filled.')}`; };
-                D.getElementById('fillEmail').onclick = () => { const c=fillByAttr('email',rand(emails))+fillByAttr('mail',rand(emails)); D.getElementById('fakeOut').textContent=`✅ ${c} ${_('fields filled.')}`; };
-                D.getElementById('fillPhone').onclick = () => { const c=fillByAttr('phone',rand(phones))+fillByAttr('mobile',rand(phones))+fillByAttr('tel',rand(phones)); D.getElementById('fakeOut').textContent=`✅ ${c} ${_('fields filled.')}`; };
-                D.getElementById('fillAll').onclick = () => { const c=fillByAttr('name',rand(fnames))+fillByAttr('email',rand(emails))+fillByAttr('phone',rand(phones)); D.getElementById('fakeOut').textContent=`✅ ${c} ${_('fields filled.')}`; };
-                D.getElementById('usePassBtn').onclick = () => { const pass=D.getElementById('genOut').textContent; if(!pass){D.getElementById('passMsg').textContent=_('No password generated.');return;} D.querySelectorAll('input[type=password]').forEach(inp=>{inp.value=pass;inp.dispatchEvent(new Event('input',{bubbles:true}));}); D.getElementById('passMsg').textContent='✅ '+_('Password filled.'); };
-                const updateList = () => { const lst=D.getElementById('savedList'); lst.innerHTML=S.passwords.map((e,i)=>`<div style="border-bottom:1px solid #3e3e42;padding:3px 0;display:flex;justify-content:space-between;"><span><b>${e.domain}</b> ${e.username}</span><span style="cursor:pointer;color:#007acc;" onclick="navigator.clipboard&&navigator.clipboard.writeText('${e.password}')">📋</span></div>`).join('')||'<span style="color:#888;">—</span>'; };
-                D.getElementById('saveEntry').onclick = async () => {
-                    const user=D.getElementById('saveUser').value.trim(), pass=D.getElementById('genOut').textContent;
-                    if(!user||!pass)return;
-                    const arr=S.passwords; arr.push({domain:location.hostname,username:user,password:pass}); S.passwords=arr; updateList();
-                    dlBlob(new Blob([JSON.stringify(S.passwords,null,2)],{type:'application/json'}),S.passFile);
-                    D.getElementById('passMsg').textContent='✅ '+_('Password saved and exported.');
-                    // also sync to kernel if online
-                    if(_kernelOnline&&S.kernelUrl){
-                        try{await fetch(S.kernelUrl+'/passwords/autosave',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({domain:location.hostname,username:user,password:pass,url:location.href})});}catch(e){}
+                if(!D.getElementById('bi-pm-css')){
+                    const _pms=D.createElement('style');_pms.id='bi-pm-css';
+                    _pms.textContent=`
+                        .pm{display:flex;flex-direction:column;height:100%;gap:4px;}
+                        .pm-top{display:flex;gap:5px;align-items:center;flex-shrink:0;}
+                        .pm-srch{flex:1;background:#2a2a2a;border:1px solid #3e3e42;border-radius:8px;color:#d4d4d4;padding:7px 11px;font-size:12px;outline:none;direction:rtl;font-family:inherit;transition:.15s;}
+                        .pm-srch:focus{border-color:#007acc;}
+                        .pm-btn{padding:7px 13px;border-radius:7px;border:none;cursor:pointer;font-size:12px;font-family:inherit;background:#3c3c3c;color:#d4d4d4;white-space:nowrap;transition:.15s;}
+                        .pm-btn:hover{background:#4d4d4d;color:#fff;}
+                        .pm-btn.pr{background:#0e639c;color:#fff;} .pm-btn.pr:hover{background:#1177bb;}
+                        .pm-tabs{display:flex;border-bottom:1px solid #2a2a2a;flex-shrink:0;}
+                        .pm-tab{padding:6px 14px;font-size:11px;color:#666;cursor:pointer;border-bottom:2px solid transparent;transition:.15s;font-weight:600;}
+                        .pm-tab.on{color:#007acc;border-bottom-color:#007acc;}
+                        .pm-body{flex:1;overflow-y:auto;}
+                        .pm-body::-webkit-scrollbar{width:3px;} .pm-body::-webkit-scrollbar-thumb{background:#3e3e42;border-radius:3px;}
+                        .pm-cred{background:#252526;border:1px solid #2a2a2a;border-radius:10px;padding:11px 13px;margin-bottom:7px;transition:.15s;}
+                        .pm-cred:hover{border-color:#007acc33;}
+                        .pm-cred-top{display:flex;align-items:center;gap:9px;}
+                        .pm-ico{width:32px;height:32px;border-radius:8px;background:#1a1a1a;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+                        .pm-info{flex:1;min-width:0;}
+                        .pm-site{font-size:13px;color:#d4d4d4;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+                        .pm-user{font-size:11px;color:#888;margin-top:1px;}
+                        .pm-acts{display:flex;gap:3px;opacity:0;transition:.15s;}
+                        .pm-cred:hover .pm-acts{opacity:1;}
+                        .pm-ibtn{width:26px;height:26px;border-radius:5px;border:none;background:#1a1a1a;color:#888;cursor:pointer;font-size:11px;display:flex;align-items:center;justify-content:center;transition:.15s;font-family:inherit;}
+                        .pm-ibtn:hover{background:#3c3c3c;color:#d4d4d4;}
+                        .pm-ibtn.rd:hover{background:#3d0c0c;color:#f55;}
+                        .pm-fields{margin-top:9px;display:flex;flex-direction:column;gap:5px;}
+                        .pm-field{background:#1a1a1a;border-radius:7px;padding:7px 10px;display:flex;align-items:center;gap:7px;}
+                        .pm-flbl{font-size:10px;color:#666;width:52px;flex-shrink:0;}
+                        .pm-fval{flex:1;font-size:12px;color:#ccc;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:Consolas,monospace;}
+                        .pm-fcpy{padding:3px 7px;border-radius:5px;border:none;background:#252526;color:#888;cursor:pointer;font-size:10px;transition:.15s;font-family:inherit;}
+                        .pm-fcpy:hover{color:#007acc;}
+                        .pm-fcpy.ok{color:#6a9955;}
+                        .pm-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:28px;text-align:center;}
+                        .pm-form-inp{width:100%;background:#1a1a1a;border:1px solid #3e3e42;border-radius:7px;color:#d4d4d4;padding:8px 11px;font-size:12px;outline:none;direction:ltr;box-sizing:border-box;font-family:Consolas;transition:.15s;margin-bottom:8px;}
+                        .pm-form-inp:focus{border-color:#007acc;}
+                        .pm-form-inp[type=password]{letter-spacing:2px;}
+                        .pm-form-row{display:flex;gap:6px;margin-bottom:8px;}
+                        .pm-form-row .pm-form-inp{margin-bottom:0;}
+                        .pm-gen-out{background:#1a1a1a;border:1px solid #3e3e42;border-radius:8px;padding:12px;font-family:Consolas;font-size:14px;color:#007acc;letter-spacing:2px;text-align:center;word-break:break-all;margin-bottom:8px;}
+                        .pm-strength{display:flex;gap:2px;margin-bottom:8px;}
+                        .pm-strength-seg{flex:1;height:3px;border-radius:2px;}
+                        .pm-sett-sec{background:#252526;border:1px solid #2a2a2a;border-radius:9px;padding:11px;margin-bottom:8px;}
+                        .pm-sett-ttl{font-size:11px;color:#007acc;font-weight:700;margin-bottom:9px;}
+                        .pm-tag{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:20px;background:#1a3050;border:1px solid #007acc44;color:#007acc;font-size:11px;margin:2px;}
+                        .pm-tag-del{cursor:pointer;color:#f55;font-weight:700;}
+                    `;
+                    D.head.appendChild(_pms);
+                }
+
+                // ── State ──
+                let pmCreds = (()=>{try{return JSON.parse(GM_getValue('bi_creds_v3','[]'));}catch(e){return [];}})();
+                let pmPref  = (()=>{try{return JSON.parse(GM_getValue('bi_pass_pref','{}'));}catch(e){return {};}})();
+                pmPref.len    = pmPref.len    || 16;
+                pmPref.emails = pmPref.emails || [];
+                pmPref.users  = pmPref.users  || [];
+                let pmView='list', pmSearch='', pmShown={}, pmEditId=null, pmGenPwd='';
+                let pmGenOpts={upper:true,lower:true,digits:true,sym:false,len:pmPref.len};
+                const pmSaveCreds=()=>GM_setValue('bi_creds_v3',JSON.stringify(pmCreds));
+                const pmSavePref =()=>GM_setValue('bi_pass_pref',JSON.stringify(pmPref));
+                const pmUid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+                const pmDom=url=>{try{return new URL(url.includes('://')?url:'https://'+url).hostname;}catch(e){return url||'—';}};
+                const pmIco=d=>['🔐','🔒','🛡','🔑','🌐','🏠','💼','🎯','⚙','📱'][d.split('').reduce((a,c)=>a+c.charCodeAt(0),0)%10];
+                const pmGen=(len,opts)=>{const U='ABCDEFGHJKLMNPQRSTUVWXYZ',L='abcdefghjkmnpqrstuvwxyz',D2='23456789',SM='!@#$%&*-_=+';let pool='',res='';if(opts.upper){pool+=U;res+=U[Math.random()*U.length|0];}if(opts.lower){pool+=L;res+=L[Math.random()*L.length|0];}if(opts.digits){pool+=D2;res+=D2[Math.random()*D2.length|0];}if(opts.sym){pool+=SM;res+=SM[Math.random()*SM.length|0];}if(!pool){pool=L;res=L[0];}while(res.length<len)res+=pool[Math.random()*pool.length|0];return res.split('').sort(()=>Math.random()-.5).join('').slice(0,len);};
+                const pmStrength=p=>{let s=0;if(p.length>=12)s++;if(p.length>=16)s++;if(/[A-Z]/.test(p)&&/[a-z]/.test(p))s++;if(/\d/.test(p)&&/[^A-Za-z0-9]/.test(p))s++;return Math.min(s,3);};
+                const pmGetList=()=>pmSearch?pmCreds.filter(c=>c.site.toLowerCase().includes(pmSearch)||c.user.toLowerCase().includes(pmSearch)):pmCreds;
+
+                function pmRender(){
+                    const list=pmGetList();
+                    content.innerHTML='<div class="pm">'+
+                        '<div class="pm-top">'+
+                        (pmView==='list'?
+                            '<input class="pm-srch" id="pm-s" placeholder="جستجو در رمزها..." value="'+pmSearch+'">'+
+                            '<button class="pm-btn pr" id="pm-new">+ جدید</button>'+
+                            '<button class="pm-btn" id="pm-gen-btn">🔑</button>':
+                            '<button class="pm-btn" id="pm-back">← برگشت</button>'+
+                            '<span style="font-size:12px;color:#888;flex:1;text-align:center">'+(pmView==='add'||pmView==='edit'?(pmEditId?'ویرایش':'افزودن')+' رمز':pmView==='gen'?'تولید رمز':'تنظیمات')+'</span>'
+                        )+'</div>'+
+                        (pmView==='list'?'<div class="pm-tabs"><span class="pm-tab on">🔒 رمزها ('+pmCreds.length+')</span><span class="pm-tab" id="pm-to-gen" style="cursor:pointer">🔑 Generator</span><span class="pm-tab" id="pm-to-sett" style="cursor:pointer">⚙ تنظیمات</span></div>':'') +
+                        '<div class="pm-body" id="pm-body">'+
+                        (pmView==='list'?pmRenderList(list):'')+
+                        (pmView==='add'||pmView==='edit'?pmRenderForm():'')+
+                        (pmView==='gen'?pmRenderGen():'')+
+                        (pmView==='sett'?pmRenderSett():'')+
+                        '</div></div>';
+                    pmBind();
+                }
+
+                function pmRenderList(list){
+                    if(!list.length)return '<div class="pm-empty"><div style="font-size:40px;opacity:.25">🔒</div><div style="color:#888;font-size:13px">'+(pmSearch?'رمزی یافت نشد':'هنوز رمزی ذخیره نکردی!')+'</div>'+(pmSearch?'':'<button class="pm-btn pr" id="pm-empty-new">+ افزودن اولین رمز</button>')+'</div>';
+                    return list.map(cr=>'<div class="pm-cred" data-cid="'+cr.id+'">'+
+                        '<div class="pm-cred-top">'+
+                        '<div class="pm-ico">'+pmIco(cr.site||'')+'</div>'+
+                        '<div class="pm-info">'+
+                        '<div class="pm-site">'+pmDom(cr.site)+'</div>'+
+                        '<div class="pm-user">'+cr.user+'</div>'+
+                        '</div>'+
+                        '<div class="pm-acts">'+
+                        '<button class="pm-ibtn" data-pedit="'+cr.id+'">✏</button>'+
+                        '<button class="pm-ibtn rd" data-pdel="'+cr.id+'">🗑</button>'+
+                        '</div></div>'+
+                        '<div class="pm-fields">'+
+                        '<div class="pm-field"><span class="pm-flbl">نام کاربری</span><span class="pm-fval">'+cr.user+'</span><button class="pm-fcpy" data-pcpy="'+encodeURIComponent(cr.user)+'">📋</button></div>'+
+                        '<div class="pm-field"><span class="pm-flbl">رمز عبور</span><span class="pm-fval" id="pm-pw-'+cr.id+'">'+(pmShown[cr.id]?cr.pass:'•'.repeat(Math.min(cr.pass.length,12)))+'</span>'+
+                        '<button class="pm-fcpy" data-peye="'+cr.id+'">'+(pmShown[cr.id]?'🙈':'👁')+'</button>'+
+                        '<button class="pm-fcpy" data-pcpy="'+encodeURIComponent(cr.pass)+'">📋</button></div>'+
+                        (cr.url?'<div class="pm-field"><span class="pm-flbl">آدرس</span><a class="pm-fval" href="'+cr.url+'" target="_blank" style="color:#007acc;text-decoration:none">'+cr.url.slice(0,45)+'</a></div>':'')+
+                        '</div></div>'
+                    ).join('');
+                }
+
+                function pmRenderForm(){
+                    const cr=pmEditId?pmCreds.find(x=>x.id===pmEditId):null;
+                    const sugE=pmPref.emails.slice(0,3);
+                    return '<div style="padding:4px 0;">'+
+                        '<label style="font-size:11px;color:#888;display:block;margin-bottom:4px;font-weight:600;">🌐 سایت / دامنه</label>'+
+                        '<input class="pm-form-inp" id="pf-site" placeholder="example.com" dir="ltr" value="'+(cr?cr.site:'')+'" autocomplete="off">'+
+                        '<label style="font-size:11px;color:#888;display:block;margin-bottom:4px;font-weight:600;">👤 نام کاربری / ایمیل</label>'+
+                        '<input class="pm-form-inp" id="pf-user" placeholder="user@email.com" dir="ltr" value="'+(cr?cr.user:'')+'" autocomplete="off">'+
+                        (sugE.length?'<div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:-4px;margin-bottom:8px;">'+sugE.map(e=>'<button style="padding:2px 8px;border-radius:20px;background:#1a3050;border:1px solid #007acc44;color:#007acc;font-size:10px;cursor:pointer;font-family:inherit" data-pfill="'+encodeURIComponent(e)+'">'+e+'</button>').join('')+'</div>':'')+
+                        '<label style="font-size:11px;color:#888;display:block;margin-bottom:4px;font-weight:600;">🔑 رمز عبور</label>'+
+                        '<div class="pm-form-row">'+
+                        '<input class="pm-form-inp" id="pf-pass" type="password" placeholder="رمز عبور" dir="ltr" value="'+(cr?cr.pass:'')+'">'+
+                        '<button class="pm-btn" id="pf-eye" style="padding:7px 10px;font-size:16px">👁</button>'+
+                        '<button class="pm-btn" id="pf-qgen" title="تولید سریع ('+pmPref.len+' کاراکتر)">⚡</button>'+
+                        '</div>'+
+                        '<div id="pf-pass-strength" style="margin-top:-4px;margin-bottom:8px;"></div>'+
+                        '<label style="font-size:11px;color:#888;display:block;margin-bottom:4px;font-weight:600;">🔗 آدرس کامل (اختیاری)</label>'+
+                        '<input class="pm-form-inp" id="pf-url" placeholder="https://example.com" dir="ltr" value="'+(cr?cr.url||'':'')+'">'+
+                        '<label style="font-size:11px;color:#888;display:block;margin-bottom:4px;font-weight:600;">📝 یادداشت</label>'+
+                        '<input class="pm-form-inp" id="pf-note" placeholder="یادداشت..." value="'+(cr?cr.note||'':'')+'" dir="rtl">'+
+                        '<div style="display:flex;gap:7px;margin-top:6px;">'+
+                        '<button class="pm-btn pr" id="pf-save" style="flex:1">💾 ذخیره</button>'+
+                        '<button class="pm-btn" id="pm-back">انصراف</button>'+
+                        '</div><div id="pf-st" style="font-size:11px;margin-top:6px;"></div></div>';
+                }
+
+                function pmRenderGen(){
+                    if(!pmGenPwd)pmGenPwd=pmGen(pmGenOpts.len,pmGenOpts);
+                    const str=pmStrength(pmGenPwd);
+                    const sc=['#f55','#d29922','#007acc','#6a9955'];
+                    const sl=['ضعیف','متوسط','قوی','بسیار قوی'];
+                    return '<div style="padding:4px 0;">'+
+                        '<div class="pm-gen-out" id="pm-gen-out">'+pmGenPwd+'</div>'+
+                        '<div class="pm-strength">'+[0,1,2,3].map(i=>'<div class="pm-strength-seg" style="background:'+(str>i?sc[i]:'#2a2a2a')+'"></div>').join('')+'</div>'+
+                        '<div style="text-align:center;font-size:11px;color:'+sc[str]+';margin-bottom:10px">'+sl[str]+'</div>'+
+                        '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">'+
+                        '<label style="font-size:12px;color:#888;width:45px;">طول رمز</label>'+
+                        '<input type="range" id="pm-glen" min="8" max="32" value="'+pmGenOpts.len+'" style="flex:1;accent-color:#007acc;">'+
+                        '<span id="pm-glenval" style="font-size:13px;color:#007acc;font-weight:700;width:24px">'+pmGenOpts.len+'</span></div>'+
+                        '<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;">'+
+                        [['upper','حروف بزرگ'],['lower','حروف کوچک'],['digits','اعداد'],['sym','نماد']].map(([k,l])=>
+                            '<label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:#aaa"><input type="checkbox" id="pmg-'+k+'" '+(pmGenOpts[k]?'checked':'')+' style="accent-color:#007acc"> '+l+'</label>'
+                        ).join('')+'</div>'+
+                        '<div style="display:flex;gap:6px;flex-wrap:wrap;">'+
+                        '<button class="pm-btn pr" id="pm-regen" style="flex:1">🔄 تولید مجدد</button>'+
+                        '<button class="pm-btn" id="pm-cpy-gen">📋 کپی</button>'+
+                        '<button class="pm-btn" id="pm-set-def">⭐ پیش‌فرض</button>'+
+                        '</div></div>';
+                }
+
+                function pmRenderSett(){
+                    return '<div style="padding:4px 0;">'+
+                        '<div class="pm-sett-sec">'+
+                        '<div class="pm-sett-ttl">⚡ پیش‌فرض‌ها</div>'+
+                        '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">'+
+                        '<label style="font-size:12px;color:#888;flex:1">📏 طول رمز پیش‌فرض</label>'+
+                        '<span id="pm-sl-val" style="font-size:14px;color:#007acc;font-weight:700">'+pmPref.len+'</span></div>'+
+                        '<input type="range" id="pm-slen" min="8" max="32" value="'+pmPref.len+'" style="width:100%;accent-color:#007acc;margin-bottom:8px;">'+
+                        '</div>'+
+                        '<div class="pm-sett-sec">'+
+                        '<div class="pm-sett-ttl">📧 ایمیل‌های ذخیره‌شده</div>'+
+                        '<div style="display:flex;gap:5px;margin-bottom:7px;"><input id="pm-se-email" placeholder="email@example.com" dir="ltr" style="flex:1;background:#1a1a1a;border:1px solid #3e3e42;border-radius:6px;color:#d4d4d4;padding:6px 9px;font-size:11px;outline:none;font-family:Consolas;">'+
+                        '<button class="pm-btn" id="pm-se-add" style="padding:6px 10px;font-size:11px">+ اضافه</button></div>'+
+                        '<div id="pm-se-list">'+pmPref.emails.map(e=>'<span class="pm-tag">'+e+'<span class="pm-tag-del" data-de-email="'+encodeURIComponent(e)+'">×</span></span>').join('')+'</div>'+
+                        '</div>'+
+                        '<div class="pm-sett-sec">'+
+                        '<div class="pm-sett-ttl">👤 نام‌های کاربری ذخیره‌شده</div>'+
+                        '<div style="display:flex;gap:5px;margin-bottom:7px;"><input id="pm-su-user" placeholder="username" dir="ltr" style="flex:1;background:#1a1a1a;border:1px solid #3e3e42;border-radius:6px;color:#d4d4d4;padding:6px 9px;font-size:11px;outline:none;font-family:Consolas;">'+
+                        '<button class="pm-btn" id="pm-su-add" style="padding:6px 10px;font-size:11px">+ اضافه</button></div>'+
+                        '<div id="pm-su-list">'+pmPref.users.map(u=>'<span class="pm-tag">'+u+'<span class="pm-tag-del" data-de-user="'+encodeURIComponent(u)+'">×</span></span>').join('')+'</div>'+
+                        '</div>'+
+                        '<div class="pm-sett-sec">'+
+                        '<div class="pm-sett-ttl" style="color:#f55">⚠ مدیریت داده</div>'+
+                        '<button class="pm-btn" id="pm-export" style="width:100%;margin-bottom:5px">📤 خروجی JSON</button>'+
+                        '<input type="file" id="pm-import-f" style="display:none" accept=".json">'+
+                        '<button class="pm-btn" id="pm-import-btn" style="width:100%;margin-bottom:5px">📥 وارد کردن JSON</button>'+
+                        '<button class="pm-btn" id="pm-del-all" style="width:100%;color:#f55">🗑 حذف همه رمزها</button>'+
+                        '</div></div>';
+                }
+
+                function pmBind(){
+                    const g=id=>D.getElementById(id);
+                    const body=g('pm-body');
+                    // nav
+                    g('pm-back')&&g('pm-back').addEventListener('click',()=>{pmView='list';pmEditId=null;pmRender();});
+                    g('pm-new')&&g('pm-new').addEventListener('click',()=>{pmView='add';pmEditId=null;pmRender();});
+                    g('pm-empty-new')&&g('pm-empty-new').addEventListener('click',()=>{pmView='add';pmEditId=null;pmRender();});
+                    g('pm-gen-btn')&&g('pm-gen-btn').addEventListener('click',()=>{pmView='gen';pmGenPwd='';pmRender();});
+                    g('pm-to-gen')&&g('pm-to-gen').addEventListener('click',()=>{pmView='gen';pmGenPwd='';pmRender();});
+                    g('pm-to-sett')&&g('pm-to-sett').addEventListener('click',()=>{pmView='sett';pmRender();});
+                    // search
+                    g('pm-s')&&g('pm-s').addEventListener('input',function(){pmSearch=this.value.toLowerCase();pmRender();});
+                    // copy
+                    if(body)body.querySelectorAll('[data-pcpy]').forEach(b=>b.addEventListener('click',()=>{N.clipboard&&N.clipboard.writeText(decodeURIComponent(b.dataset.pcpy));const o=b.textContent;b.textContent='✓';b.classList.add('ok');setTimeout(()=>{b.textContent=o;b.classList.remove('ok');},1500);}));
+                    // eye toggle
+                    if(body)body.querySelectorAll('[data-peye]').forEach(b=>b.addEventListener('click',()=>{const id=b.dataset.peye;pmShown[id]=!pmShown[id];pmRender();}));
+                    // edit/delete
+                    if(body)body.querySelectorAll('[data-pedit]').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();pmEditId=b.dataset.pedit;pmView='edit';pmRender();}));
+                    if(body)body.querySelectorAll('[data-pdel]').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();if(confirm('این رمز حذف شود؟')){pmCreds=pmCreds.filter(x=>x.id!==b.dataset.pdel);pmSaveCreds();pmRender();}}));
+                    // form bindings
+                    g('pf-eye')&&g('pf-eye').addEventListener('click',()=>{const p=g('pf-pass');if(p)p.type=p.type==='password'?'text':'password';});
+                    g('pf-qgen')&&g('pf-qgen').addEventListener('click',()=>{const p=g('pf-pass');if(p){p.value=pmGen(pmPref.len,{upper:true,lower:true,digits:true,sym:true});p.type='text';}});
+                    if(body)body.querySelectorAll('[data-pfill]').forEach(b=>b.addEventListener('click',()=>{const u=g('pf-user');if(u)u.value=decodeURIComponent(b.dataset.pfill);}));
+                    // password strength indicator
+                    const pfp=g('pf-pass');
+                    if(pfp){
+                        pfp.addEventListener('input',function(){
+                            const str=pmStrength(this.value);const sc=['#f55','#d29922','#007acc','#6a9955'];const sl=['ضعیف','متوسط','قوی','بسیار قوی'];
+                            const el=g('pf-pass-strength');
+                            if(el&&this.value)el.innerHTML='<div style="display:flex;gap:2px;margin-bottom:3px;">'+[0,1,2,3].map(i=>'<div style="flex:1;height:3px;border-radius:2px;background:'+(str>i?sc[i]:'#2a2a2a')+'"></div>').join('')+'</div>'+
+                                '<div style="font-size:10px;color:'+sc[str]+';text-align:center">'+sl[str]+'</div>';
+                            else if(el)el.innerHTML='';
+                        });
                     }
-                };
-                D.getElementById('exportPass').onclick = () => dlBlob(new Blob([JSON.stringify(S.passwords,null,2)],{type:'application/json'}),S.passFile);
-                D.getElementById('importPass').onclick = () => D.getElementById('importPassFile').click();
-                D.getElementById('importPassFile').onchange = e => { const f=e.target.files[0]; if(!f)return; const r=new FileReader(); r.onload=ev=>{try{S.passwords=JSON.parse(ev.target.result);updateList();}catch(ex){}}; r.readAsText(f); };
-                updateList();
-                D.getElementById('genOut').textContent = genPass();
+                    g('pf-save')&&g('pf-save').addEventListener('click',async()=>{
+                        const site=(g('pf-site')?.value||'').trim(),user=(g('pf-user')?.value||'').trim(),pass=(g('pf-pass')?.value||'').trim(),url=(g('pf-url')?.value||'').trim(),note=(g('pf-note')?.value||'').trim();
+                        const st=g('pf-st');
+                        if(!site||!pass){if(st)st.textContent='⚠ سایت و رمز عبور الزامی است';return;}
+                        if(user&&user.includes('@')&&!pmPref.emails.includes(user)){pmPref.emails.unshift(user);}
+                        if(user&&!user.includes('@')&&!pmPref.users.includes(user)){pmPref.users.unshift(user);}
+                        pmPref.emails=pmPref.emails.slice(0,6);pmPref.users=pmPref.users.slice(0,6);pmSavePref();
+                        if(pmEditId){const c=pmCreds.find(x=>x.id===pmEditId);if(c)Object.assign(c,{site,user,pass,url,note,updated:Date.now()});}
+                        else pmCreds.push({id:pmUid(),site,user,pass,url,note,created:Date.now()});
+                        pmSaveCreds();
+                        if(_kernelOnline&&S.kernelUrl){try{await fetch(S.kernelUrl+'/passwords/autosave',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({domain:pmDom(site),username:user,password:pass,url})});}catch(e){}}
+                        pmView='list';pmEditId=null;pmRender();
+                    });
+                    // generator controls
+                    const regen=()=>{pmGenPwd=pmGen(pmGenOpts.len,pmGenOpts);const go=g('pm-gen-out');if(go)go.textContent=pmGenPwd;};
+                    g('pm-glen')&&g('pm-glen').addEventListener('input',function(){pmGenOpts.len=+this.value;const lv=g('pm-glenval');if(lv)lv.textContent=pmGenOpts.len;regen();});
+                    ['upper','lower','digits','sym'].forEach(k=>{const cb=g('pmg-'+k);if(cb)cb.addEventListener('change',()=>{pmGenOpts[k]=cb.checked;regen();});});
+                    g('pm-regen')&&g('pm-regen').addEventListener('click',regen);
+                    g('pm-cpy-gen')&&g('pm-cpy-gen').addEventListener('click',()=>{N.clipboard&&N.clipboard.writeText(pmGenPwd);const b=g('pm-cpy-gen');if(b){b.textContent='✓ کپی شد';setTimeout(()=>b.textContent='📋 کپی',1500);}});
+                    g('pm-set-def')&&g('pm-set-def').addEventListener('click',()=>{pmPref.len=pmGenOpts.len;pmSavePref();const b=g('pm-set-def');if(b){b.textContent='✓ ذخیره شد';setTimeout(()=>b.textContent='⭐ پیش‌فرض',1500);}});
+                    // settings
+                    g('pm-slen')&&g('pm-slen').addEventListener('input',function(){pmPref.len=+this.value;pmSavePref();const lv=g('pm-sl-val');if(lv)lv.textContent=pmPref.len;});
+                    g('pm-se-add')&&g('pm-se-add').addEventListener('click',()=>{const v=(g('pm-se-email')?.value||'').trim();if(v&&!pmPref.emails.includes(v)){pmPref.emails.push(v);pmSavePref();pmRender();}});
+                    g('pm-su-add')&&g('pm-su-add').addEventListener('click',()=>{const v=(g('pm-su-user')?.value||'').trim();if(v&&!pmPref.users.includes(v)){pmPref.users.push(v);pmSavePref();pmRender();}});
+                    if(body){
+                        body.querySelectorAll('[data-de-email]').forEach(el=>el.addEventListener('click',()=>{pmPref.emails=pmPref.emails.filter(e=>e!==decodeURIComponent(el.dataset.deEmail));pmSavePref();pmRender();}));
+                        body.querySelectorAll('[data-de-user]').forEach(el=>el.addEventListener('click',()=>{pmPref.users=pmPref.users.filter(u=>u!==decodeURIComponent(el.dataset.deUser));pmSavePref();pmRender();}));
+                    }
+                    g('pm-export')&&g('pm-export').addEventListener('click',()=>dlBlob(new Blob([JSON.stringify(pmCreds,null,2)],{type:'application/json'}),'bi_passwords.json'));
+                    g('pm-import-btn')&&g('pm-import-btn').addEventListener('click',()=>g('pm-import-f')?.click());
+                    g('pm-import-f')&&g('pm-import-f').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{pmCreds=JSON.parse(ev.target.result);pmSaveCreds();pmView='list';pmRender();}catch(ex){alert('فایل نامعتبر');}};r.readAsText(f);});
+                    g('pm-del-all')&&g('pm-del-all').addEventListener('click',()=>{if(confirm('همه رمزها حذف شوند؟')){pmCreds=[];pmSaveCreds();pmRender();}});
+                }
+
+                pmRender();
             }
 
             // ---- Storage ----
@@ -1421,6 +1614,50 @@
                 stopBtn.style.color = stopped ? '#000' : '#fff';
                 stopBtn.onclick = () => { if(!stopped){W.stop();stopped=true;stopBtn.textContent='▶ '+_('Resume Loading');stopBtn.style.background='#0f0';stopBtn.style.color='#000';}else{location.reload();} };
                 D.getElementById('injectXSS').onclick = () => { const payload=D.getElementById('xssPayload').value; const inputs=D.querySelectorAll('input[type=text],input:not([type]),textarea'); inputs.forEach(inp=>{inp.value=payload;inp.dispatchEvent(new Event('input',{bubbles:true}));}); D.getElementById('toolsOut').textContent=`✅ ${_('XSS payload injected into ')}${inputs.length}${_(' fields.')}`; };
+
+                // ── Fake Data & Auto-fill (moved from Pass) ──
+                const _fdEl = D.createElement('div');
+                _fdEl.className='bi-sec';
+                _fdEl.style.cssText='margin-top:8px;';
+                _fdEl.innerHTML=`
+                    <h4>👤 ${_('Fake Data')} & Auto-fill</h4>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:6px;">
+                        <button id="fdName" style="background:#4d4d4d;color:#fff;">👤 ${_('Fill Name')}</button>
+                        <button id="fdEmail" style="background:#4d4d4d;color:#fff;">📧 ${_('Fill Email')}</button>
+                        <button id="fdPhone" style="background:#4d4d4d;color:#fff;">📞 ${_('Fill Phone')}</button>
+                        <button id="fdAll" style="background:#0e639c;color:#fff;">⚡ ${_('Fill All')}</button>
+                    </div>
+                    <div style="margin-bottom:6px;">
+                        <button id="fdAutoFill" style="width:100%;background:#c5862c;color:#fff;margin-bottom:4px;">🤖 Auto-fill از پروفایل ذخیره‌شده</button>
+                        <button id="fdDetectPwd" style="width:100%;background:#4d4d4d;color:#fff;">🔑 پیشنهاد رمز در فیلدهای صفحه</button>
+                    </div>
+                    <div id="fdOut" style="font-size:11px;color:#6a9955;"></div>`;
+                D.getElementById('toolsOut').parentNode.insertBefore(_fdEl, D.getElementById('toolsOut'));
+                const _fnames=['علی','رضا','سارا','مریم','محمد','فاطمه','حسین','زهرا','مهدی','نرگس','امیر','پریسا'];
+                const _femails=['test@example.com','user@mail.com','info@site.org','hello@domain.ir'];
+                const _fphones=['09123456789','09351234567','09187654321','09012345678'];
+                const _frand=arr=>arr[Math.floor(Math.random()*arr.length)];
+                const _ffill=(attr,val)=>{let c=0;D.querySelectorAll('input:not([type=hidden]),textarea').forEach(inp=>{const n=((inp.name||'')+' '+(inp.id||'')+' '+(inp.placeholder||'')).toLowerCase();if(n.includes(attr)){inp.value=val;inp.dispatchEvent(new Event('input',{bubbles:true}));c++;}});return c;};
+                D.getElementById('fdName').onclick=()=>{const c=_ffill('name',_frand(_fnames))+_ffill('first',_frand(_fnames))+_ffill('last',_frand(_fnames));D.getElementById('fdOut').textContent='✅ '+c+' '+_('fields filled.');};
+                D.getElementById('fdEmail').onclick=()=>{const c=_ffill('email',_frand(_femails))+_ffill('mail',_frand(_femails));D.getElementById('fdOut').textContent='✅ '+c+' '+_('fields filled.');};
+                D.getElementById('fdPhone').onclick=()=>{const c=_ffill('phone',_frand(_fphones))+_ffill('mobile',_frand(_fphones))+_ffill('tel',_frand(_fphones));D.getElementById('fdOut').textContent='✅ '+c+' '+_('fields filled.');};
+                D.getElementById('fdAll').onclick=()=>{const c=_ffill('name',_frand(_fnames))+_ffill('email',_frand(_femails))+_ffill('phone',_frand(_fphones));D.getElementById('fdOut').textContent='✅ '+c+' '+_('fields filled.');};
+                D.getElementById('fdAutoFill').onclick=()=>{
+                    const p=S.fillProfile;let c=0;
+                    const fa=(attr,val)=>{D.querySelectorAll('input:not([type=hidden]),textarea').forEach(inp=>{const n=((inp.name||'')+' '+(inp.id||'')+' '+(inp.placeholder||'')).toLowerCase();if(n.includes(attr)){inp.value=val;inp.dispatchEvent(new Event('input',{bubbles:true}));c++;}});};
+                    if(p.name)fa('name',p.name);if(p.email){fa('email',p.email);fa('mail',p.email);}if(p.phone){fa('phone',p.phone);fa('mobile',p.phone);}if(p.address)fa('address',p.address);
+                    D.getElementById('fdOut').textContent='✅ '+c+' فیلد از پروفایل پر شد';
+                };
+                D.getElementById('fdDetectPwd').onclick=()=>{
+                    const pref=(()=>{try{return JSON.parse(GM_getValue('bi_pass_pref','{}'));}catch(e){return {};}})();
+                    const pwdF=D.querySelectorAll('input[type=password]');const emF=D.querySelectorAll('input[type=email],[name*=email],[placeholder*=mail i]');
+                    let ct=0;
+                    (pref.emails||[]).forEach(e=>{emF.forEach(f=>{if(!f._bifill){f._bifill=true;const dl=D.createElement('datalist');dl.id='bi-af-'+Math.random().toString(36).slice(2);const o=D.createElement('option');o.value=e;dl.appendChild(o);D.body.appendChild(dl);f.setAttribute('list',dl.id);}});});
+                    if(pwdF.length){const sp=['ABCDEFGHJKLMNPQRSTUVWXYZ','abcdefghjkmnpqrstuvwxyz','23456789','!@#$%&*'].reduce((a,s)=>{while(a.length<(pref.len||16))a+=s[Math.random()*s.length|0];return a;},'').slice(0,pref.len||16);
+                    pwdF.forEach(f=>{if(!f._bifill){f._bifill=true;f.placeholder='پیشنهاد: '+sp;f.addEventListener('focus',()=>{if(!f.value)f.value=sp;});ct++;}});
+                    D.getElementById('fdOut').textContent='✅ '+ct+' فیلد رمز تنظیم شد';}
+                    else D.getElementById('fdOut').textContent='⚠ فیلد رمزی در این صفحه پیدا نشد';
+                };
                 D.getElementById('showPasswordsBtn').onclick = () => { const inputs=D.querySelectorAll('input[type=password]'); inputs.forEach(inp=>inp.type='text'); D.getElementById('toolsOut').textContent=`✅ ${inputs.length} ${_('password fields revealed.')}`; };
                 D.getElementById('screenshotBtn').onclick = async () => {
                     const st=D.getElementById('toolsOut'); st.textContent='📸 '+_('Capturing screenshot...');
@@ -2168,262 +2405,504 @@
                 // loadPdfjs then build (no await here - showTab is not async)
                 loadPdfjs().then(() => _pBuild()).catch(() => _pBuild());
             }
-            // ---- Todo (redesigned) ----
+            // ---- Todo (v7.1 full) ----
             else if (tab === 'Todo') {
-                // CSS injection
-                if(!D.getElementById('bi-todo-css')){
-                    const ts=D.createElement('style'); ts.id='bi-todo-css';
-                    ts.textContent=`
-                        .bi-tn{display:flex;flex-direction:column;height:100%;direction:rtl;}
-                        .bi-tn-tabs{display:flex;gap:5px;padding:0 0 8px;flex-shrink:0;}
-                        .bi-tntab{flex:1;padding:8px;border-radius:8px;border:none;cursor:pointer;font-size:12px;font-weight:700;font-family:inherit;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:4px;}
-                        .bi-tntab.nt{background:#1f1900;color:#b87e00;} .bi-tntab.nt.on{background:#c5862c;color:#fff;}
-                        .bi-tntab.tt{background:#0d1f36;color:#4a90d9;} .bi-tntab.tt.on{background:#0e639c;color:#fff;}
-                        .bi-tnbar{display:flex;align-items:center;gap:4px;padding:0 0 6px;flex-shrink:0;}
-                        .bi-tnico{width:28px;height:28px;border-radius:6px;border:none;background:#3c3c3c;color:#888;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:.15s;font-family:inherit;}
-                        .bi-tnico:hover{background:#4d4d4d;color:#d4d4d4;} .bi-tnico.on{background:#1a3050;color:#007acc;}
-                        .bi-tnsrch{flex:1;background:#3c3c3c;border:1px solid #555;border-radius:6px;color:#d4d4d4;padding:5px 9px;font-size:11px;outline:none;direction:rtl;font-family:inherit;}
-                        .bi-tnbody{flex:1;overflow-y:auto;}
-                        .bi-tnbody::-webkit-scrollbar{width:3px;} .bi-tnbody::-webkit-scrollbar-thumb{background:#3e3e42;border-radius:3px;}
-                        .bi-tnempty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:24px 16px;text-align:center;}
-                        .bi-tnempty-ico{font-size:44px;opacity:.3;} .bi-tnempty-ttl{font-size:14px;font-weight:700;color:#d4d4d4;}
-                        .bi-tnempty-sug{font-size:11px;color:#c5862c;font-weight:600;}
-                        .bi-tnempty ul{list-style:disc;padding-right:16px;text-align:right;margin:0;}
-                        .bi-tnempty li{font-size:11px;color:#6a9955;margin:3px 0;cursor:pointer;transition:.1s;} .bi-tnempty li:hover{color:#d4d4d4;}
-                        .bi-task{background:#252526;border:1px solid #3e3e42;border-radius:8px;padding:9px 11px;margin-bottom:6px;transition:.15s;}
-                        .bi-task:hover{border-color:#007acc44;} .bi-task.done{opacity:.5;}
-                        .bi-task-top{display:flex;align-items:flex-start;gap:8px;}
-                        .bi-task-chk{width:18px;height:18px;border-radius:50%;border:2px solid #555;background:transparent;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:.2s;margin-top:1px;font-size:10px;font-family:inherit;}
-                        .bi-task-chk:hover{border-color:#007acc;} .bi-task-chk.done{background:#238636;border-color:#238636;color:#fff;}
-                        .bi-task-txt{flex:1;font-size:12px;color:#d4d4d4;line-height:1.5;word-break:break-word;}
-                        .bi-task-txt.done{text-decoration:line-through;color:#6a9955;}
-                        .bi-task-acts{display:flex;gap:3px;opacity:0;transition:.15s;} .bi-task:hover .bi-task-acts{opacity:1;}
-                        .bi-task-ibtn{width:22px;height:22px;border-radius:5px;border:none;background:#3c3c3c;color:#888;cursor:pointer;font-size:11px;display:flex;align-items:center;justify-content:center;transition:.15s;font-family:inherit;}
-                        .bi-task-ibtn:hover{background:#4d4d4d;color:#d4d4d4;} .bi-task-ibtn.rd:hover{background:#5a1a1a;color:#f44;}
-                        .bi-task-meta{display:flex;gap:4px;margin-top:6px;flex-wrap:wrap;align-items:center;}
-                        .bi-pri{font-size:10px;padding:2px 7px;border-radius:20px;font-weight:700;}
-                        .bi-pri.h{background:#5a1a1a;color:#f66;} .bi-pri.m{background:#4d3000;color:#d29922;} .bi-pri.l{background:#0a2d12;color:#3fb950;}
-                        .bi-due{font-size:10px;color:#888;} .bi-due.late{color:#f66;}
-                        .bi-note{background:#252526;border:1px solid #3e3e42;border-radius:8px;padding:9px 11px;margin-bottom:6px;transition:.15s;cursor:pointer;}
-                        .bi-note:hover{border-color:#c5862c44;}
-                        .bi-note-hd{display:flex;align-items:flex-start;justify-content:space-between;gap:6px;}
-                        .bi-note-ttl{font-size:12px;color:#d4d4d4;font-weight:600;flex:1;} .bi-note-prev{font-size:11px;color:#888;line-height:1.5;margin-top:4px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
-                        .bi-note-date{font-size:10px;color:#555;margin-top:5px;}
-                        .bi-tnfooter{padding:6px 0 0;border-top:1px solid #3e3e42;flex-shrink:0;}
-                        .bi-tn-inprow{display:flex;align-items:center;gap:6px;}
-                        .bi-tn-inp{flex:1;background:#3c3c3c;border:1px solid #555;border-radius:8px;color:#d4d4d4;padding:7px 10px;font-size:12px;outline:none;direction:rtl;transition:.15s;font-family:inherit;}
-                        .bi-tn-inp:focus{border-color:#007acc;} .bi-tn-inp.ni:focus{border-color:#c5862c;}
-                        .bi-tn-addbtn{padding:7px 11px;border-radius:7px;border:none;cursor:pointer;font-size:11px;font-weight:700;white-space:nowrap;transition:.15s;font-family:inherit;}
-                        .bi-tn-addbtn.ta{background:#0e639c;color:#fff;} .bi-tn-addbtn.ta:hover{background:#1177bb;}
-                        .bi-tn-addbtn.na{background:#c5862c;color:#fff;} .bi-tn-addbtn.na:hover{background:#d4973d;}
-                        .bi-tnpanel{background:#2d2d2d;border:1px solid #3e3e42;border-radius:8px;padding:10px;margin-bottom:6px;flex-shrink:0;}
-                        .bi-tnchips{display:flex;gap:4px;flex-wrap:wrap;}
-                        .bi-tnchip{padding:4px 10px;border-radius:20px;background:#3c3c3c;border:1px solid #555;color:#888;font-size:11px;cursor:pointer;transition:.15s;font-family:inherit;}
-                        .bi-tnchip:hover{color:#d4d4d4;} .bi-tnchip.on{background:#1a3050;border-color:#007acc;color:#007acc;}
-                        .bi-tnradio{display:flex;align-items:center;gap:6px;padding:4px 0;cursor:pointer;color:#c9c9c9;font-size:12px;}
-                        .bi-tndanger{display:flex;align-items:center;gap:6px;padding:6px 7px;border-radius:6px;cursor:pointer;color:#f44;font-size:11px;transition:.15s;background:transparent;border:none;width:100%;text-align:right;font-family:inherit;}
-                        .bi-tndanger:hover{background:#3d0c0c;}
-                        .bi-xp{background:#2d2d2d;border:1px solid #3e3e42;border-radius:8px;padding:10px;margin-bottom:6px;}
-                        .bi-xp textarea{width:100%;background:transparent;border:none;color:#d4d4d4;font-size:12px;resize:none;outline:none;direction:rtl;min-height:50px;font-family:Consolas,monospace;line-height:1.5;}
-                        .bi-xpbtns{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px;align-items:center;}
-                        .bi-xpbtn{padding:3px 9px;border-radius:5px;background:#3c3c3c;border:1px solid #555;color:#888;font-size:11px;cursor:pointer;font-family:inherit;}
-                        .bi-xpsub{padding:6px 14px;background:#0e639c;color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;margin-right:auto;font-family:inherit;}
+                // ── CSS ────────────────────────────────────────────────
+                if(!D.getElementById('bi-td-css')){
+                    const _tcs=D.createElement('style');_tcs.id='bi-td-css';
+                    _tcs.textContent=`
+                        .td{display:flex;flex-direction:column;height:100%;gap:0;}
+                        /* sub-tabs */
+                        .td-tabs{display:flex;gap:5px;padding:0 0 8px;flex-shrink:0;}
+                        .td-tab{flex:1;padding:8px;border-radius:9px;border:none;cursor:pointer;font-size:12px;font-weight:700;font-family:inherit;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:4px;}
+                        .td-tab.nt{background:#1f1900;color:#b87e00;} .td-tab.nt.on{background:#c5862c;color:#fff;box-shadow:0 2px 10px #c5862c44;}
+                        .td-tab.tt{background:#0d1f36;color:#4a90d9;} .td-tab.tt.on{background:#0e639c;color:#fff;box-shadow:0 2px 10px #0e639c44;}
+                        /* toolbar */
+                        .td-bar{display:flex;align-items:center;gap:4px;padding:0 0 6px;flex-shrink:0;}
+                        .td-ico{width:28px;height:28px;border-radius:6px;border:none;background:#252526;color:#888;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:.15s;font-family:inherit;}
+                        .td-ico:hover{background:#3c3c3c;color:#ccc;} .td-ico.on{background:#1a3050;color:#007acc;}
+                        .td-srch{flex:1;background:#252526;border:1px solid #3e3e42;border-radius:7px;color:#ccc;padding:5px 9px;font-size:11px;outline:none;font-family:inherit;direction:rtl;transition:.15s;}
+                        .td-srch:focus{border-color:#007acc;}
+                        /* body */
+                        .td-body{flex:1;overflow-y:auto;min-height:0;}
+                        .td-body::-webkit-scrollbar{width:3px;} .td-body::-webkit-scrollbar-thumb{background:#3e3e42;border-radius:3px;}
+                        /* empty */
+                        .td-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:24px 16px;text-align:center;}
+                        .td-empty-ico{font-size:44px;opacity:.3;}
+                        .td-sug{font-size:11px;color:#c5862c;font-weight:600;}
+                        .td-empty ul{list-style:disc;padding-right:16px;text-align:right;margin:0;}
+                        .td-empty li{font-size:11px;color:#6a9955;margin:4px 0;cursor:pointer;transition:.1s;} .td-empty li:hover{color:#ccc;}
+                        /* task card */
+                        .td-task{background:#252526;border:1px solid #2a2a2a;border-radius:9px;padding:10px 12px;margin-bottom:6px;transition:.15s;}
+                        .td-task:hover{border-color:#0e639c33;}
+                        .td-task-top{display:flex;align-items:flex-start;gap:8px;}
+                        .td-chk{width:18px;height:18px;border-radius:50%;border:2px solid #555;background:transparent;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:.2s;margin-top:1px;font-size:10px;font-family:inherit;}
+                        .td-chk:hover{border-color:#0e639c;} .td-chk.done{background:#238636;border-color:#238636;color:#fff;}
+                        .td-txt{flex:1;font-size:12px;color:#d4d4d4;line-height:1.5;word-break:break-word;}
+                        .td-txt.done{text-decoration:line-through;color:#6a9955;}
+                        .td-task-acts{display:flex;gap:2px;opacity:0;transition:.15s;} .td-task:hover .td-task-acts{opacity:1;}
+                        .td-ibtn{width:22px;height:22px;border-radius:5px;border:none;background:#1e1e1e;color:#888;cursor:pointer;font-size:10px;display:flex;align-items:center;justify-content:center;transition:.15s;font-family:inherit;}
+                        .td-ibtn:hover{background:#3c3c3c;color:#ccc;} .td-ibtn.rd:hover{background:#3d0c0c;color:#f55;}
+                        .td-meta{display:flex;gap:4px;margin-top:7px;flex-wrap:wrap;align-items:center;}
+                        .td-pri{font-size:10px;padding:2px 7px;border-radius:20px;font-weight:700;}
+                        .td-pri.h{background:#3d0c0c;color:#f66;} .td-pri.m{background:#3d2200;color:#d29922;} .td-pri.l{background:#0a2d12;color:#3fb950;}
+                        .td-due{font-size:10px;color:#888;} .td-due.late{color:#f55;}
+                        .td-lbl{font-size:10px;padding:2px 7px;border-radius:20px;background:#1a3050;color:#007acc;}
+                        .td-desc{font-size:11px;color:#666;margin-top:4px;padding-top:4px;border-top:1px solid #2a2a2a;line-height:1.5;}
+                        /* note card */
+                        .td-note{border:1px solid transparent;border-radius:9px;padding:10px 12px;margin-bottom:6px;transition:.15s;cursor:pointer;position:relative;}
+                        .td-note:hover{filter:brightness(1.1);}
+                        .td-note-head{display:flex;align-items:flex-start;justify-content:space-between;gap:6px;}
+                        .td-note-ttl{font-size:12px;font-weight:600;color:#111;flex:1;}
+                        .td-note-prev{font-size:11px;color:#333;line-height:1.5;margin-top:4px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
+                        .td-note-date{font-size:10px;color:#555;margin-top:6px;}
+                        /* footer input area */
+                        .td-footer{padding:8px 0 0;border-top:1px solid #2a2a2a;flex-shrink:0;}
+                        .td-inp-area{background:#252526;border:1px solid #3e3e42;border-radius:10px;overflow:hidden;margin-bottom:5px;}
+                        .td-inp{width:100%;background:transparent;border:none;color:#d4d4d4;padding:9px 12px;font-size:12px;outline:none;direction:rtl;font-family:inherit;box-sizing:border-box;}
+                        .td-inp-desc{width:100%;background:transparent;border:none;border-top:1px solid #2a2a2a;color:#999;padding:7px 12px;font-size:11px;outline:none;direction:rtl;font-family:inherit;box-sizing:border-box;resize:none;min-height:0;}
+                        .td-toolbar{display:flex;align-items:center;gap:4px;padding:4px 6px;background:#1e1e1e;}
+                        .td-tbtn{width:28px;height:28px;border-radius:6px;border:none;cursor:pointer;background:transparent;color:#888;font-size:14px;display:flex;align-items:center;justify-content:center;transition:.15s;font-family:inherit;position:relative;}
+                        .td-tbtn:hover{background:#2a2a2a;color:#ccc;} .td-tbtn.on{color:#007acc;}
+                        .td-tbtn-lbl{font-size:9px;position:absolute;bottom:-2px;right:-2px;background:#007acc;color:#fff;border-radius:10px;padding:0 3px;display:none;}
+                        .td-tbtn.has-val .td-tbtn-lbl{display:block;}
+                        .td-add-btn{padding:7px 13px;border-radius:7px;border:none;cursor:pointer;font-size:11px;font-weight:700;font-family:inherit;margin-right:auto;transition:.15s;}
+                        .td-add-btn.ta{background:#0e639c;color:#fff;} .td-add-btn.ta:hover{background:#1177bb;}
+                        .td-add-btn.na{background:#c5862c;color:#fff;} .td-add-btn.na:hover{background:#d4973d;}
+                        /* popups */
+                        .td-popup{position:absolute;bottom:100%;left:0;right:0;background:#1e1e1e;border:1px solid #3e3e42;border-radius:10px;padding:10px;margin-bottom:4px;z-index:100;box-shadow:0 4px 20px rgba(0,0,0,.6);}
+                        .td-popup-title{font-size:10px;color:#888;font-weight:600;margin-bottom:8px;}
+                        /* color picker */
+                        .td-colors{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;}
+                        .td-color-opt{width:100%;padding-bottom:100%;border-radius:8px;cursor:pointer;border:2px solid transparent;transition:.15s;position:relative;}
+                        .td-color-opt.on{border-color:#fff;} .td-color-opt::after{content:'✓';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#fff;font-size:14px;font-weight:700;opacity:0;text-shadow:0 0 4px rgba(0,0,0,.8);}
+                        .td-color-opt.on::after{opacity:1;}
+                        /* priority picker */
+                        .td-pri-opts{display:flex;flex-direction:column;gap:5px;}
+                        .td-pri-opt{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:7px;cursor:pointer;font-size:12px;color:#ccc;transition:.15s;background:transparent;border:none;width:100%;text-align:right;font-family:inherit;}
+                        .td-pri-opt:hover{background:#252526;} .td-pri-opt.on{background:#252526;color:#fff;}
+                        /* calendar */
+                        .td-cal{direction:rtl;}
+                        .td-cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+                        .td-cal-title{font-size:12px;color:#ccc;font-weight:600;}
+                        .td-cal-nav{width:24px;height:24px;border-radius:5px;border:none;background:#252526;color:#888;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit;}
+                        .td-cal-nav:hover{color:#ccc;}
+                        .td-cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;text-align:center;}
+                        .td-cal-dh{font-size:10px;color:#888;padding:3px 0;}
+                        .td-cal-day{font-size:11px;padding:5px 2px;border-radius:5px;cursor:pointer;color:#ccc;transition:.15s;border:none;background:transparent;font-family:inherit;}
+                        .td-cal-day:hover{background:#252526;} .td-cal-day.today{color:#007acc;font-weight:700;}
+                        .td-cal-day.sel{background:#0e639c;color:#fff;border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;margin:auto;}
+                        .td-cal-day.other{color:#555;}
+                        /* labels panel */
+                        .td-lbl-chips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px;}
+                        .td-lbl-chip{padding:4px 10px;border-radius:20px;border:1px solid #3e3e42;font-size:11px;cursor:pointer;color:#888;background:transparent;transition:.15s;font-family:inherit;}
+                        .td-lbl-chip:hover{color:#ccc;border-color:#555;} .td-lbl-chip.on{background:#1a3050;border-color:#0e639c;color:#007acc;}
+                        .td-lbl-add-row{display:flex;gap:5px;}
+                        .td-lbl-inp{flex:1;background:#252526;border:1px solid #3e3e42;border-radius:6px;color:#ccc;padding:5px 8px;font-size:11px;outline:none;direction:rtl;font-family:inherit;}
+                        /* format panel */
+                        .td-fmt-opts{display:grid;grid-template-columns:1fr 1fr;gap:4px;}
+                        .td-fmt-opt{display:flex;align-items:center;justify-content:space-between;padding:7px 10px;border-radius:7px;cursor:pointer;font-size:12px;color:#ccc;transition:.15s;background:transparent;border:none;width:100%;font-family:inherit;}
+                        .td-fmt-opt:hover{background:#252526;} .td-fmt-opt span:last-child{color:#555;font-family:Consolas;}
+                        /* filter/sort panels */
+                        .td-chips{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px;}
+                        .td-chip{padding:4px 10px;border-radius:20px;background:#252526;border:1px solid #3e3e42;color:#888;font-size:11px;cursor:pointer;transition:.15s;font-family:inherit;}
+                        .td-chip:hover{color:#ccc;} .td-chip.on{background:#1a3050;border-color:#0e639c;color:#007acc;}
+                        .td-radio{display:flex;align-items:center;gap:7px;padding:5px 0;cursor:pointer;color:#ccc;font-size:12px;}
+                        .td-radio input{accent-color:#007acc;}
+                        .td-danger-btn{display:flex;align-items:center;gap:6px;padding:6px 8px;border-radius:7px;cursor:pointer;color:#f55;font-size:11px;transition:.15s;background:transparent;border:none;width:100%;text-align:right;font-family:inherit;}
+                        .td-danger-btn:hover{background:#3d0c0c;}
+                        /* panel wrappers */
+                        .td-panel{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:9px;padding:10px;margin-bottom:5px;flex-shrink:0;}
+                        .td-panel-ttl{font-size:11px;color:#888;font-weight:600;margin-bottom:7px;}
                     `;
-                    D.head.appendChild(ts);
+                    D.head.appendChild(_tcs);
                 }
-                let tnTab=GM_getValue('bi_tn_tab','tasks');
-                let tnTasks=(()=>{try{return JSON.parse(GM_getValue('bi_tasks_v4','[]'));}catch(e){return [];}})();
-                let tnNotes=(()=>{try{return JSON.parse(GM_getValue('bi_notes_v4','[]'));}catch(e){return [];}})();
-                // migrate old todos
-                if(!tnTasks.length && S.todos && S.todos.length){
-                    tnTasks=S.todos.filter(t=>!t.isNote).map(t=>({id:(Date.now()+Math.random()).toString(36),title:t.text||'',done:t.done||false,pri:'',due:t.time||null,labels:[],created:t.created||Date.now()}));
-                    GM_setValue('bi_tasks_v4',JSON.stringify(tnTasks));
-                }
-                let tnFilter={due:'',pri:''};
-                let tnSort='created'; let tnShowDone=false;
-                let tnShowFP=false,tnShowSP=false,tnShowMore=false,tnAdding=false,tnNoteQ='';
-                const saveTnTasks=()=>GM_setValue('bi_tasks_v4',JSON.stringify(tnTasks));
-                const saveTnNotes=()=>GM_setValue('bi_notes_v4',JSON.stringify(tnNotes));
-                const tnuid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
-                const tnfmt=ts=>ts?new Date(ts).toLocaleDateString('fa-IR'):'';
-                const tntoday=ts=>{const d=new Date(ts),n=new Date();return d.toDateString()===n.toDateString();};
-                const tnpast=ts=>ts<Date.now();
-                const tnhasF=()=>tnFilter.due||tnFilter.pri;
 
-                function tnGetFiltered(){
-                    let list=[...tnTasks];
-                    if(!tnShowDone)list=list.filter(t=>!t.done);
-                    if(tnFilter.due==='today')list=list.filter(t=>t.due&&tntoday(t.due));
-                    else if(tnFilter.due==='past')list=list.filter(t=>t.due&&tnpast(t.due)&&!tntoday(t.due));
-                    else if(tnFilter.due==='none')list=list.filter(t=>!t.due);
-                    if(tnFilter.pri)list=list.filter(t=>t.pri===tnFilter.pri);
-                    if(tnSort==='due')list.sort((a,b)=>(a.due||9e15)-(b.due||9e15));
-                    else if(tnSort==='pri')list.sort((a,b)=>(({high:0,medium:1,low:2}[a.pri]??3))-({high:0,medium:1,low:2}[b.pri]??3));
+                // ── Jalali calendar helpers ──
+                const _toJal=(gy,gm,gd)=>{
+                    const g2d=(y,m,d)=>365*y+~~((y+3)/4)-~~((y+99)/100)+~~((y+399)/400)+[0,31,59,90,120,151,181,212,243,273,304,334][m-1]+(m>2&&((y%4===0&&y%100!==0)||y%400===0)?1:0)+d;
+                    const n=g2d(gy,gm,gd)-g2d(1948320>0?1600:1600,1,1)-79+g2d(1600,1,1);
+                    const j1=33*~~(n/12053),n2=n%12053,j2=4*~~(n2/1461),n3=n2%1461;
+                    let jy=979+j1+j2+(n3>=366?1+~~((n3-1)/365):0);
+                    let jn=n3>=366?(n3-1)%365:n3;
+                    const jml=[31,31,31,31,31,31,30,30,30,30,30,29];
+                    let jm=0;while(jm<11&&jn>=jml[jm]){jn-=jml[jm];jm++;}
+                    return[jy,jm+1,jn+1];
+                };
+                const _jDays=(jy,jm)=>jm<=6?31:jm<=11?30:((jy-979)%33%4===0?30:29);
+                const _jToG=(jy,jm,jd)=>{
+                    const j2g=(y,m,d)=>{const epbase=y-474;const epyear=474+epbase%2820;
+                    return d+(m<=7?(m-1)*30:(m-1)*30-m+6)+~~((epyear*682-110)/2816)+
+                    (epyear-1)*365+~~(epbase/2820)*1029983+1948319;};
+                    const jdn=j2g(jy,jm,jd);const l=jdn+68569,n=~~(4*l/146097),ll=l-~~((146097*n+3)/4),i=~~(4000*(ll+1)/1461001),k=ll-~~(1461*i/4)+31,j=~~(80*k/2447),dd=k-~~(2447*j/80),mm=j+2-12*~~(j/14),yy=100*(n-49)+i+~~(j/14);
+                    return[yy,mm,dd];
+                };
+                const _jMonthNames=['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'];
+                const _jDayNames=['ش','ی','د','س','چ','پ','ج'];
+                const _toNums=n=>String(n).replace(/\d/g,d=>'۰۱۲۳۴۵۶۷۸۹'[d]);
+                const _now=()=>{const t=new Date();return _toJal(t.getFullYear(),t.getMonth()+1,t.getDate());};
+
+                // ── State ──
+                let tdTab=GM_getValue('bi_td_tab','tasks');
+                let tdTasks=(()=>{try{return JSON.parse(GM_getValue('bi_tasks_v5','[]'));}catch(e){return [];}})();
+                let tdNotes=(()=>{try{return JSON.parse(GM_getValue('bi_notes_v5','[]'));}catch(e){return [];}})();
+                let tdAllLabels=(()=>{try{return JSON.parse(GM_getValue('bi_td_labels','[]'));}catch(e){return ['یادگیری','آموزش','کار'];}})();
+
+                // Filter/sort state
+                let tdFilter={due:'',pri:''};let tdSort='created';let tdShowDone=false;
+                let tdShowFP=false,tdShowSP=false,tdShowMore=false;
+                let tdNoteQ='';
+
+                // Add-new state (tasks)
+                let tdNewTitle='',tdNewDesc='',tdNewPri='',tdNewDue='',tdNewLabels=[];
+                let tdNewNoteTitle='',tdNewNoteColor='#fffcb3',tdNewNoteLabels=[],tdNewNoteFormat='';
+                // Active popup
+                let tdPopup=''; // 'pri'|'cal'|'lbl'|'fmt'|'color'|''
+                // Calendar state
+                const tdNow=_now();let tdCalY=tdNow[0],tdCalM=tdNow[1];
+
+                const saveTdTasks=()=>GM_setValue('bi_tasks_v5',JSON.stringify(tdTasks));
+                const saveTdNotes=()=>GM_setValue('bi_notes_v5',JSON.stringify(tdNotes));
+                const saveTdLabels=()=>GM_setValue('bi_td_labels',JSON.stringify(tdAllLabels));
+                const tduid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+                const tdfmt=ts=>{if(!ts)return'';const[y,m,d]=_toJal(...new Date(ts).toLocaleDateString('en-CA').split('-').map(Number));return _toNums(y)+'/'+_toNums(m)+'/'+_toNums(d);};
+                const tdpast=ts=>ts&&ts<Date.now()&&!new Date(ts).toDateString()===new Date().toDateString();
+                const tdtoday=ts=>{if(!ts)return false;return new Date(ts).toDateString()===new Date().toDateString();};
+                const NOTE_COLORS=['#fffcb3','#b3f5d1','#ffd6e7','#d4c5f9','#ffd6b3','#b3dfff','#1a3050','#1f1900'];
+
+                function tdGetFiltered(){
+                    let list=[...tdTasks];
+                    if(!tdShowDone)list=list.filter(t=>!t.done);
+                    if(tdFilter.due==='today')list=list.filter(t=>tdtoday(t.due));
+                    else if(tdFilter.due==='past')list=list.filter(t=>t.due&&tdpast(t.due));
+                    else if(tdFilter.due==='none')list=list.filter(t=>!t.due);
+                    if(tdFilter.pri)list=list.filter(t=>t.pri===tdFilter.pri);
+                    if(tdSort==='due')list.sort((a,b)=>(a.due||9e15)-(b.due||9e15));
+                    else if(tdSort==='pri')list.sort((a,b)=>(({high:0,medium:1,low:2}[a.pri]??3))-({high:0,medium:1,low:2}[b.pri]??3));
                     else list.sort((a,b)=>b.created-a.created);
                     return list;
                 }
 
-                function tnRender(){
-                    const filtered=tnTab==='tasks'?tnGetFiltered():tnNotes.filter(n=>!tnNoteQ||n.title.toLowerCase().includes(tnNoteQ));
-                    content.innerHTML=`<div class="bi-tn">
-                      <div class="bi-tn-tabs">
-                        <button class="bi-tntab nt ${tnTab==='notes'?'on':''}" id="tn-n">📋 ${_('Notes')}</button>
-                        <button class="bi-tntab tt ${tnTab==='tasks'?'on':''}" id="tn-t">☑️ ${_('Tasks')}</button>
-                      </div>
-                      <div class="bi-tnbar">
-                        ${tnTab==='tasks'?`
-                          <button class="bi-tnico ${tnShowMore?'on':''}" id="tn-more">···</button>
-                          <button class="bi-tnico" id="tn-done-tog">${tnShowDone?'👁':'🚫'}</button>
-                          <button class="bi-tnico ${tnShowFP?'on':''}" id="tn-fp">⚙</button>
-                          <button class="bi-tnico ${tnShowSP?'on':''}" id="tn-sp">↕</button>
-                          ${tnhasF()?'<span style="font-size:10px;padding:2px 7px;background:#1a3050;color:#007acc;border-radius:20px;">فیلتر</span>':''}
-                        `:`
-                          <button class="bi-tnico ${tnShowMore?'on':''}" id="tn-more-n">···</button>
-                          <input class="bi-tnsrch" id="tn-srch" placeholder="جستجو..." value="${tnNoteQ}">
-                        `}
-                      </div>
-                      ${tnTab==='tasks'&&tnShowSP?`<div class="bi-tnpanel"><div style="font-size:11px;color:#888;margin-bottom:6px;font-weight:600;">↕ ${_('Sort')}</div>
-                        ${[['created','تاریخ ساخت'],['due',_('Due date')],['pri',_('Priority')]].map(([v,l])=>`<label class="bi-tnradio"><input type="radio" name="tn-sort" value="${v}" ${tnSort===v?'checked':''}> ${l}</label>`).join('')}
-                      </div>`:''}
-                      ${tnTab==='tasks'&&tnShowFP?`<div class="bi-tnpanel">
-                        <div style="font-size:11px;color:#888;margin-bottom:5px;font-weight:600;">📅 ${_('Due date')}</div>
-                        <div class="bi-tnchips">
-                          ${[['today',_('Today')],['past','گذشته'],['none','بدون سررسید']].map(([v,l])=>`<button class="bi-tnchip ${tnFilter.due===v?'on':''}" data-fdue="${v}">${l}</button>`).join('')}
-                        </div>
-                        <div style="font-size:11px;color:#888;margin:7px 0 5px;font-weight:600;">🚩 ${_('Priority')}</div>
-                        <div class="bi-tnchips">
-                          ${[['high','🔴 '+_('High')],['medium','🟡 '+_('Medium')],['low','🟢 '+_('Low')],['','—']].map(([v,l])=>`<button class="bi-tnchip ${tnFilter.pri===v?'on':''}" data-fpri="${v}">${l}</button>`).join('')}
-                        </div>
-                        ${tnhasF()?`<button class="bi-tndanger" id="tn-clf" style="margin-top:7px;">🗑 پاک فیلتر</button>`:''}
-                      </div>`:''}
-                      ${tnTab==='tasks'&&tnShowMore?`<div class="bi-tnpanel">
-                        <label style="display:flex;align-items:center;gap:7px;cursor:pointer;color:#c9c9c9;font-size:12px;padding:3px 0"><input type="checkbox" id="tn-donecb" ${tnShowDone?'checked':''} style="accent-color:#0e639c;width:auto;"> ${_('Show done')}</label>
-                        <button class="bi-tndanger" id="tn-del-all">🗑 ${_('Delete all tasks')}</button>
-                      </div>`:''}
-                      ${tnTab==='notes'&&tnShowMore?`<div class="bi-tnpanel">
-                        <button class="bi-tndanger" id="tn-del-all-n">🗑 ${_('Delete all notes')}</button>
-                      </div>`:''}
-                      ${tnTab==='tasks'&&tnAdding?`<div class="bi-xp">
-                        <textarea id="tn-xp-ta" placeholder="عنوان تسک..." dir="rtl"></textarea>
-                        <div class="bi-xpbtns">
-                          <select id="tn-xp-pri" class="bi-xpbtn"><option value="">اولویت</option><option value="high">🔴 بالا</option><option value="medium">🟡 متوسط</option><option value="low">🟢 پایین</option></select>
-                          <input type="date" id="tn-xp-due" class="bi-xpbtn">
-                          <button class="bi-xpsub" id="tn-xp-sub">افزودن ✓</button>
-                        </div>
-                      </div>`:''}
-                      <div class="bi-tnbody">${tnTab==='tasks'?tnRenderTasks(filtered):tnRenderNotes(filtered)}</div>
-                      <div class="bi-tnfooter">
-                        ${tnTab==='tasks'?`<div class="bi-tn-inprow"><input class="bi-tn-inp" id="tn-qi" placeholder="${_('Write a task...')}" dir="rtl"><button class="bi-tn-addbtn ta" id="tn-add-t">تسک ✓</button></div>`
-                        :`<div class="bi-tn-inprow"><input class="bi-tn-inp ni" id="tn-ni" placeholder="${_('Write a note...')}" dir="rtl"><button class="bi-tn-addbtn na" id="tn-add-n">یادداشت 📋</button></div>`}
-                      </div>
-                    </div>`;
-                    tnBind();
-                }
+                function tdRender(){
+                    const filtered=tdTab==='tasks'?tdGetFiltered():tdNotes.filter(n=>!tdNoteQ||n.title.toLowerCase().includes(tdNoteQ));
+                    const hasF=tdFilter.due||tdFilter.pri;
+                    const priMap={high:['h','🔴 بالا'],medium:['m','🟡 متوسط'],low:['l','🟢 پایین']};
 
-                function tnRenderTasks(list){
-                    if(!list.length){
-                        const empty=!tnTasks.length||(!tnShowDone&&tnTasks.every(t=>t.done));
-                        const ttl = empty ? _('No tasks yet!') : _('No tasks found');
-                        const sug = empty ? ('<div class="bi-tnempty-sug">'+_('Suggestions:')+'</div><ul>'+
-                            '<li data-tnqi="daily-tasks">'+_('Daily tasks')+'</li>'+
-                            '<li data-tnqi="shopping-list">'+_('Shopping list')+'</li>'+
-                            '<li data-tnqi="payment-reminder">'+_('Payment reminder')+'</li>'+
-                            '</ul>') : '';
-                        return '<div class="bi-tnempty"><div class="bi-tnempty-ico">☑️</div><div class="bi-tnempty-ttl">'+ttl+'</div>'+sug+'</div>';
+                    // ── Header ──
+                    let html='<div class="td">'+
+                    '<div class="td-tabs">'+
+                    '<button class="td-tab nt '+(tdTab==='notes'?'on':'')+'" id="td-n">📋 '+_('Notes')+'</button>'+
+                    '<button class="td-tab tt '+(tdTab==='tasks'?'on':'')+'" id="td-t">☑️ '+_('Tasks')+'</button>'+
+                    '</div>';
+
+                    // ── Toolbar ──
+                    html+='<div class="td-bar">';
+                    if(tdTab==='tasks'){
+                        html+='<button class="td-ico '+(tdShowMore?'on':'')+'" id="td-more">···</button>'+
+                        '<button class="td-ico '+(tdShowFP?'on':'')+'" id="td-fp">⚙</button>'+
+                        '<button class="td-ico '+(tdShowSP?'on':'')+'" id="td-sp">↕</button>'+
+                        (hasF?'<span style="font-size:10px;padding:2px 7px;background:#1a3050;color:#007acc;border-radius:20px;white-space:nowrap">فیلتر</span>':'');
+                    } else {
+                        html+='<button class="td-ico '+(tdShowMore?'on':'')+'" id="td-more-n">···</button>'+
+                        '<input class="td-srch" id="td-srch" placeholder="جستجو..." value="'+tdNoteQ+'">';
                     }
-                    const priMap={high:['h','🔴 '+_('High')],medium:['m','🟡 '+_('Medium')],low:['l','🟢 '+_('Low')]};
-                    return list.map(t=>{
-                        const late=t.due&&!t.done&&tnpast(t.due)&&!tntoday(t.due);
-                        const [pc,pl]=priMap[t.pri]||[];
-                        return '<div class="bi-task '+(t.done?'done':'')+'">'+
-                            '<div class="bi-task-top">'+
-                            '<button class="bi-task-chk '+(t.done?'done':'')+'" data-tntg="'+t.id+'">'+(t.done?'✓':'')+'</button>'+
-                            '<div class="bi-task-txt '+(t.done?'done':'')+'">'+t.title+'</div>'+
-                            '<div class="bi-task-acts"><button class="bi-task-ibtn rd" data-tntd="'+t.id+'">🗑</button></div>'+
-                            '</div>'+
-                            ((t.pri||t.due)?'<div class="bi-task-meta">'+
-                                (pc?'<span class="bi-pri '+pc+'">'+pl+'</span>':'')+
-                                (t.due?'<span class="bi-due '+(late?'late':'')+'">📅 '+tnfmt(t.due)+(late?' ('+_('Overdue')+')':'')+'</span>':'')+
-                                '</div>':'')+
+                    html+='</div>';
+
+                    // ── Sort panel ──
+                    if(tdTab==='tasks'&&tdShowSP){
+                        html+='<div class="td-panel"><div class="td-panel-ttl">↕ ترتیب</div>'+
+                        [['created','تاریخ ساخت'],['due','سررسید'],['pri','اولویت']].map(([v,l])=>
+                            '<label class="td-radio"><input type="radio" name="td-sort" value="'+v+'" '+(tdSort===v?'checked':'')+'> '+l+'</label>'
+                        ).join('')+'</div>';
+                    }
+                    // ── Filter panel ──
+                    if(tdTab==='tasks'&&tdShowFP){
+                        html+='<div class="td-panel"><div class="td-panel-ttl">📅 سررسید</div><div class="td-chips">'+
+                        [['today','امروز'],['past','گذشته'],['none','بدون سررسید']].map(([v,l])=>
+                            '<button class="td-chip '+(tdFilter.due===v?'on':'')+'" data-fdue="'+v+'">'+l+'</button>'
+                        ).join('')+'</div><div class="td-panel-ttl" style="margin-top:8px">🚩 اولویت</div><div class="td-chips">'+
+                        [['high','🔴 بالا'],['medium','🟡 متوسط'],['low','🟢 پایین'],['','بدون']].map(([v,l])=>
+                            '<button class="td-chip '+(tdFilter.pri===v?'on':'')+'" data-fpri="'+v+'">'+l+'</button>'
+                        ).join('')+'</div>'+(hasF?'<button class="td-danger-btn" id="td-clf">🗑 پاک فیلتر</button>':'')+'</div>';
+                    }
+                    // ── More panel ──
+                    if(tdTab==='tasks'&&tdShowMore){
+                        html+='<div class="td-panel">'+
+                        '<label style="display:flex;align-items:center;gap:7px;cursor:pointer;color:#ccc;font-size:12px;padding:3px 0"><input type="checkbox" id="td-donecb" '+(tdShowDone?'checked':'')+' style="accent-color:#0e639c;width:auto"> نمایش انجام‌شده</label>'+
+                        '<button class="td-danger-btn" id="td-dal">🗑 حذف همه تسک‌ها</button></div>';
+                    }
+                    if(tdTab==='notes'&&tdShowMore){
+                        html+='<div class="td-panel"><button class="td-danger-btn" id="td-dan">🗑 حذف همه یادداشت‌ها</button></div>';
+                    }
+
+                    // ── List body ──
+                    html+='<div class="td-body" id="td-body">';
+                    if(tdTab==='tasks'){
+                        if(!filtered.length){
+                            const empty=!tdTasks.length||(!tdShowDone&&tdTasks.every(t=>t.done));
+                            html+='<div class="td-empty"><div class="td-empty-ico">☑️</div>'+
+                            '<div style="font-size:14px;font-weight:700;color:#d4d4d4">'+(empty?'هنوز تسکی ثبت نکردی!':'تسکی یافت نشد')+'</div>'+
+                            (empty?'<div class="td-sug">موضوعات پیشنهادی:</div><ul>'+
+                            '<li data-qi="کارهای روزانه">کارهای روزانه</li><li data-qi="لیست خرید">لیست خرید</li><li data-qi="یادآوری پرداخت">یادآوری پرداخت</li></ul>':'')+
                             '</div>';
-                    }).join('');
-                }
-
-                function tnRenderNotes(list){
-                    if(!list.length){
-                        const ttl = tnNoteQ ? _('No notes found') : _('No notes yet!');
-                        const sug = !tnNoteQ ? ('<div class="bi-tnempty-sug">'+_('Suggestions:')+'</div><ul>'+
-                            '<li data-tnni="daily-journal">'+_('Daily journal')+'</li>'+
-                            '<li data-tnni="monthly-plan">'+_('Monthly plan')+'</li>'+
-                            '<li data-tnni="goals-list">'+_('Goals list')+'</li>'+
-                            '</ul>') : '';
-                        return '<div class="bi-tnempty"><div class="bi-tnempty-ico">📋</div><div class="bi-tnempty-ttl">'+ttl+'</div>'+sug+'</div>';
+                        } else {
+                            filtered.forEach(t=>{
+                                const late=t.due&&!t.done&&t.due<Date.now()&&!tdtoday(t.due);
+                                const [pc,pl]=priMap[t.pri]||[];
+                                html+='<div class="td-task '+(t.done?'done':'')+'">'+
+                                '<div class="td-task-top">'+
+                                '<button class="td-chk '+(t.done?'done':'')+'" data-tg="'+t.id+'">'+(t.done?'✓':'')+'</button>'+
+                                '<div class="td-txt '+(t.done?'done':'')+'">'+t.title+'</div>'+
+                                '<div class="td-task-acts"><button class="td-ibtn rd" data-td="'+t.id+'">🗑</button></div>'+
+                                '</div>'+
+                                ((t.pri||t.due||(t.labels||[]).length)?'<div class="td-meta">'+
+                                (pc?'<span class="td-pri '+pc+'">'+pl+'</span>':'')+
+                                (t.due?'<span class="td-due '+(late?'late':'')+'">📅 '+tdfmt(t.due)+(late?' (گذشته)':'')+'</span>':'')+
+                                (t.labels||[]).map(l=>'<span class="td-lbl">🔖 '+l+'</span>').join('')+
+                                '</div>':'')+
+                                (t.desc?'<div class="td-desc">'+t.desc+'</div>':'')+
+                                '</div>';
+                            });
+                        }
+                    } else {
+                        if(!filtered.length){
+                            html+='<div class="td-empty"><div class="td-empty-ico">📋</div>'+
+                            '<div style="font-size:14px;font-weight:700;color:#d4d4d4">'+(tdNoteQ?'یادداشتی یافت نشد':'هنوز یادداشتی ثبت نکردی!')+'</div>'+
+                            (!tdNoteQ?'<div class="td-sug">موضوعات پیشنهادی:</div><ul>'+
+                            '<li data-ni="ژورنال روزانه">ژورنال روزانه</li><li data-ni="برنامه ماهانه">برنامه ماهانه</li><li data-ni="لیست اهداف">لیست اهداف</li></ul>':'')+
+                            '</div>';
+                        } else {
+                            filtered.forEach(n=>{
+                                const isDark=n.color==='#1a3050'||n.color==='#1f1900';
+                                html+='<div class="td-note" style="background:'+(n.color||'#fffcb3')+';border-color:'+(n.color||'#fffcb3')+';">'+
+                                '<div class="td-note-head">'+
+                                '<div class="td-note-ttl" style="color:'+(isDark?'#d4d4d4':'#111')+'">'+n.title+'</div>'+
+                                '<button class="td-ibtn rd" data-nd="'+n.id+'" style="background:rgba(0,0,0,.15);color:'+(isDark?'#ccc':'#555')+'">🗑</button>'+
+                                '</div>'+
+                                (n.body?'<div class="td-note-prev" style="color:'+(isDark?'#aaa':'#333')+'">'+n.body+'</div>':'')+
+                                (n.labels&&n.labels.length?'<div style="display:flex;gap:3px;flex-wrap:wrap;margin-top:5px">'+n.labels.map(l=>'<span style="font-size:10px;padding:1px 6px;border-radius:20px;background:rgba(0,0,0,.15);color:'+(isDark?'#ccc':'#333')+'">'+l+'</span>').join('')+'</div>':'')+
+                                '<div class="td-note-date" style="color:'+(isDark?'#888':'#555')+'">📅 '+tdfmt(n.created)+'</div>'+
+                                '</div>';
+                            });
+                        }
                     }
-                    return list.map(n=>(
-                        '<div class="bi-note">'+
-                        '<div class="bi-note-hd">'+
-                        '<div class="bi-note-ttl">'+n.title+'</div>'+
-                        '<button class="bi-task-ibtn rd" data-tnnd="'+n.id+'">🗑</button>'+
-                        '</div>'+
-                        (n.body?'<div class="bi-note-prev">'+n.body+'</div>':'')+
-                        '<div class="bi-note-date">📅 '+tnfmt(n.created)+'</div>'+
-                        '</div>'
-                    )).join('');
+                    html+='</div>'; // end td-body
+
+                    // ── Footer input area ──
+                    html+='<div class="td-footer" style="position:relative">';
+
+                    // Popup (rendered inside footer for positioning)
+                    if(tdPopup==='pri'&&tdTab==='tasks'){
+                        html+='<div class="td-popup"><div class="td-popup-title">🚩 اولویت</div><div class="td-pri-opts">'+
+                        [['','بدون اولویت','⚪'],['low','🟢 پایین',''],['medium','🟡 متوسط',''],['high','🔴 بالا','']].map(([v,l])=>
+                            '<button class="td-pri-opt '+(tdNewPri===v?'on':'')+'" data-sp="'+v+'">'+l+'</button>'
+                        ).join('')+'</div></div>';
+                    } else if(tdPopup==='cal'&&tdTab==='tasks'){
+                        html+=tdRenderCal();
+                    } else if(tdPopup==='lbl'){
+                        html+='<div class="td-popup"><div class="td-popup-title">🔖 برچسب‌ها</div>'+
+                        '<div class="td-lbl-chips">'+tdAllLabels.map(l=>{
+                            const sel=tdTab==='tasks'?tdNewLabels.includes(l):tdNewNoteLabels.includes(l);
+                            return '<button class="td-lbl-chip '+(sel?'on':'')+'" data-sl="'+l+'">'+l+'</button>';
+                        }).join('')+'</div>'+
+                        '<div class="td-lbl-add-row"><input id="td-lbl-inp" class="td-lbl-inp" placeholder="برچسب جدید...">'+
+                        '<button class="td-tbtn" id="td-lbl-add" style="width:auto;padding:0 8px">+ افزودن</button></div></div>';
+                    } else if(tdPopup==='color'&&tdTab==='notes'){
+                        html+='<div class="td-popup"><div class="td-popup-title">🎨 رنگ یادداشت</div>'+
+                        '<div class="td-colors">'+NOTE_COLORS.map(c=>
+                            '<div class="td-color-opt '+(tdNewNoteColor===c?'on':'')+'" data-nc="'+c+'" style="background:'+c+'"></div>'
+                        ).join('')+'</div></div>';
+                    } else if(tdPopup==='fmt'&&tdTab==='notes'){
+                        html+='<div class="td-popup"><div class="td-popup-title">✏️ قالب‌بندی</div><div class="td-fmt-opts">'+
+                        [['## ','تیتر ۲','H2'],['### ','تیتر ۳','H3'],['**','بولد','B'],['*','ایتالیک','I'],['- ','لیست بولت','≡'],['[لینک]()','لینک','🔗']].map(([v,l,ic])=>
+                            '<button class="td-fmt-opt" data-fmt="'+encodeURIComponent(v)+'"><span>'+l+'</span><span>'+ic+'</span></button>'
+                        ).join('')+'</div></div>';
+                    }
+
+                    // Input row
+                    html+='<div class="td-inp-area">';
+                    if(tdTab==='tasks'){
+                        html+='<input class="td-inp" id="td-qi" placeholder="نوشتن تسک جدید..." dir="rtl" value="'+tdNewTitle+'" autocomplete="off">'+
+                        '<textarea class="td-inp-desc" id="td-qdesc" placeholder="توضیحات..." rows="1" dir="rtl">'+tdNewDesc+'</textarea>';
+                    } else {
+                        html+='<input class="td-inp" id="td-ni" placeholder="نوشتن یادداشت جدید..." dir="rtl" value="'+tdNewNoteTitle+'" autocomplete="off">';
+                    }
+                    html+='<div class="td-toolbar">';
+                    if(tdTab==='tasks'){
+                        html+='<button class="td-tbtn '+(tdNewPri?'has-val':'')+'" id="td-tpri" title="اولویت">🚩<span class="td-tbtn-lbl">'+(tdNewPri?{high:'!',medium:'!',low:'·'}[tdNewPri]||'':'')+'</span></button>'+
+                        '<button class="td-tbtn '+(tdNewDue?'has-val':'')+'" id="td-tcal" title="سررسید">📅<span class="td-tbtn-lbl">'+(tdNewDue?'●':'')+'</span></button>'+
+                        '<button class="td-tbtn '+(tdNewLabels.length?'has-val':'')+'" id="td-tlbl" title="برچسب">🔖<span class="td-tbtn-lbl">'+(tdNewLabels.length||'')+'</span></button>'+
+                        '<button class="td-add-btn ta" id="td-add-task">تسک ✓</button>';
+                    } else {
+                        html+='<button class="td-tbtn" id="td-tfmt" title="قالب‌بندی" style="font-size:12px;font-weight:700;color:#aaa">T</button>'+
+                        '<button class="td-tbtn '+(tdPopup==='color'?'on':'')+'" id="td-tcolor" title="رنگ" style="font-size:18px">'+
+                        '<div style="width:16px;height:16px;border-radius:50%;background:'+tdNewNoteColor+';border:1px solid rgba(255,255,255,.3)"></div></button>'+
+                        '<button class="td-tbtn '+(tdNewNoteLabels.length?'has-val':'')+'" id="td-tlbl" title="برچسب">🔖<span class="td-tbtn-lbl">'+(tdNewNoteLabels.length||'')+'</span></button>'+
+                        '<button class="td-add-btn na" id="td-add-note">یادداشت 📋</button>';
+                    }
+                    html+='</div></div></div></div>'; // close inp-area, footer, td
+
+                    content.innerHTML=html;
+                    tdBind();
                 }
 
-                function tnBind(){
-                    const W2=content.querySelector('.bi-tn'); if(!W2)return;
-                    const g=id=>W2.querySelector('#'+id);
-                    const re=()=>tnRender();
+                function tdRenderCal(){
+                    const days=_jDays(tdCalY,tdCalM);
+                    const firstDay=_jToG(tdCalY,tdCalM,1);
+                    const fd=new Date(firstDay[0],firstDay[1]-1,firstDay[2]).getDay();
+                    // Sunday=0, convert to Shamsi week start (Sat=0)
+                    const offset=(fd+1)%7;
+                    const selParts=tdNewDue?tdNewDue.split('-').map(Number):null;
+                    let selJ=selParts?_toJal(selParts[0],selParts[1],selParts[2]):null;
+                    const todayJ=_now();
+                    let cal='<div class="td-popup"><div class="td-cal">'+
+                    '<div class="td-cal-head">'+
+                    '<button class="td-cal-nav" id="td-cal-prev">‹</button>'+
+                    '<span class="td-cal-title">'+_jMonthNames[tdCalM-1]+' '+_toNums(tdCalY)+'</span>'+
+                    '<button class="td-cal-nav" id="td-cal-next">›</button>'+
+                    '</div>'+
+                    '<div class="td-cal-grid">'+_jDayNames.map(d=>'<div class="td-cal-dh">'+d+'</div>').join('');
+                    for(let i=0;i<offset;i++) cal+='<div></div>';
+                    for(let d=1;d<=days;d++){
+                        const isToday=todayJ[0]===tdCalY&&todayJ[1]===tdCalM&&todayJ[2]===d;
+                        const isSel=selJ&&selJ[0]===tdCalY&&selJ[1]===tdCalM&&selJ[2]===d;
+                        const gd=_jToG(tdCalY,tdCalM,d);
+                        const gStr=gd[0]+'-'+String(gd[1]).padStart(2,'0')+'-'+String(gd[2]).padStart(2,'0');
+                        cal+='<button class="td-cal-day '+(isToday?'today':'')+' '+(isSel?'sel':'')+'" data-gdate="'+gStr+'">'+_toNums(d)+'</button>';
+                    }
+                    cal+='</div></div>';
+                    if(tdNewDue) cal+='<button class="td-danger-btn" id="td-cal-clear" style="margin-top:4px">🗑 پاک کردن تاریخ</button>';
+                    cal+='</div>';
+                    return cal;
+                }
+
+                function tdBind(){
+                    const g=id=>D.getElementById(id);
+                    const body=g('td-body');
+
                     // tabs
-                    g('tn-n')&&g('tn-n').addEventListener('click',()=>{tnTab='notes';tnShowFP=tnShowSP=tnShowMore=false;GM_setValue('bi_tn_tab','notes');re();});
-                    g('tn-t')&&g('tn-t').addEventListener('click',()=>{tnTab='tasks';tnShowFP=tnShowSP=tnShowMore=false;GM_setValue('bi_tn_tab','tasks');re();});
+                    g('td-n')&&g('td-n').addEventListener('click',()=>{tdTab='notes';tdShowFP=tdShowSP=tdShowMore=false;tdPopup='';GM_setValue('bi_td_tab','notes');tdRender();});
+                    g('td-t')&&g('td-t').addEventListener('click',()=>{tdTab='tasks';tdShowFP=tdShowSP=tdShowMore=false;tdPopup='';GM_setValue('bi_td_tab','tasks');tdRender();});
+
                     // toolbar
-                    g('tn-fp')&&g('tn-fp').addEventListener('click',()=>{tnShowFP=!tnShowFP;tnShowSP=false;tnShowMore=false;re();});
-                    g('tn-sp')&&g('tn-sp').addEventListener('click',()=>{tnShowSP=!tnShowSP;tnShowFP=false;tnShowMore=false;re();});
-                    g('tn-more')&&g('tn-more').addEventListener('click',()=>{tnShowMore=!tnShowMore;tnShowFP=false;tnShowSP=false;re();});
-                    g('tn-more-n')&&g('tn-more-n').addEventListener('click',()=>{tnShowMore=!tnShowMore;re();});
-                    g('tn-done-tog')&&g('tn-done-tog').addEventListener('click',()=>{tnShowDone=!tnShowDone;re();});
-                    g('tn-donecb')&&g('tn-donecb').addEventListener('change',function(){tnShowDone=this.checked;re();});
-                    g('tn-srch')&&g('tn-srch').addEventListener('input',function(){tnNoteQ=this.value.toLowerCase();re();});
-                    // sort
-                    W2.querySelectorAll('input[name="tn-sort"]').forEach(r=>r.addEventListener('change',()=>{tnSort=r.value;re();}));
+                    g('td-fp')&&g('td-fp').addEventListener('click',()=>{tdShowFP=!tdShowFP;tdShowSP=false;tdShowMore=false;tdRender();});
+                    g('td-sp')&&g('td-sp').addEventListener('click',()=>{tdShowSP=!tdShowSP;tdShowFP=false;tdShowMore=false;tdRender();});
+                    g('td-more')&&g('td-more').addEventListener('click',()=>{tdShowMore=!tdShowMore;tdShowFP=false;tdShowSP=false;tdRender();});
+                    g('td-more-n')&&g('td-more-n').addEventListener('click',()=>{tdShowMore=!tdShowMore;tdRender();});
+                    g('td-srch')&&g('td-srch').addEventListener('input',function(){tdNoteQ=this.value.toLowerCase();tdRender();});
+
+                    // sort radios
+                    content.querySelectorAll('input[name="td-sort"]').forEach(r=>r.addEventListener('change',()=>{tdSort=r.value;tdRender();}));
+
                     // filter chips
-                    W2.querySelectorAll('[data-fdue]').forEach(b=>b.addEventListener('click',()=>{tnFilter.due=tnFilter.due===b.dataset.fdue?'':b.dataset.fdue;re();}));
-                    W2.querySelectorAll('[data-fpri]').forEach(b=>b.addEventListener('click',()=>{tnFilter.pri=tnFilter.pri===b.dataset.fpri?'':b.dataset.fpri;re();}));
-                    g('tn-clf')&&g('tn-clf').addEventListener('click',()=>{tnFilter={due:'',pri:''};re();});
-                    // delete all
-                    g('tn-del-all')&&g('tn-del-all').addEventListener('click',()=>{if(confirm(_('Delete all tasks')+'?')){tnTasks=[];saveTnTasks();re();}});
-                    g('tn-del-all-n')&&g('tn-del-all-n').addEventListener('click',()=>{if(confirm(_('Delete all notes')+'?')){tnNotes=[];saveTnNotes();re();}});
-                    // expanded add
-                    g('tn-xp-sub')&&g('tn-xp-sub').addEventListener('click',()=>{const ta=g('tn-xp-ta'),txt=(ta?.value||'').trim();if(!txt)return;const pri=g('tn-xp-pri')?.value||'';const dv=g('tn-xp-due')?.value;tnTasks.push({id:tnuid(),title:txt,done:false,pri,due:dv?new Date(dv).getTime():null,labels:[],created:Date.now()});saveTnTasks();tnAdding=false;re();});
+                    content.querySelectorAll('[data-fdue]').forEach(b=>b.addEventListener('click',()=>{tdFilter.due=tdFilter.due===b.dataset.fdue?'':b.dataset.fdue;tdRender();}));
+                    content.querySelectorAll('[data-fpri]').forEach(b=>b.addEventListener('click',()=>{tdFilter.pri=tdFilter.pri===b.dataset.fpri?'':b.dataset.fpri;tdRender();}));
+                    g('td-clf')&&g('td-clf').addEventListener('click',()=>{tdFilter={due:'',pri:''};tdRender();});
+                    g('td-donecb')&&g('td-donecb').addEventListener('change',function(){tdShowDone=this.checked;tdRender();});
+                    g('td-dal')&&g('td-dal').addEventListener('click',()=>{if(confirm('همه تسک‌ها حذف شوند؟')){tdTasks=[];saveTdTasks();tdRender();}});
+                    g('td-dan')&&g('td-dan').addEventListener('click',()=>{if(confirm('همه یادداشت‌ها حذف شوند؟')){tdNotes=[];saveTdNotes();tdRender();}});
+
                     // task toggle/delete
-                    W2.querySelectorAll('[data-tntg]').forEach(b=>b.addEventListener('click',()=>{const t=tnTasks.find(x=>x.id===b.dataset.tntg);if(t){t.done=!t.done;saveTnTasks();re();}}));
-                    W2.querySelectorAll('[data-tntd]').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();tnTasks=tnTasks.filter(t=>t.id!==b.dataset.tntd);saveTnTasks();re();}));
-                    W2.querySelectorAll('[data-tnnd]').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();tnNotes=tnNotes.filter(n=>n.id!==b.dataset.tnnd);saveTnNotes();re();}));
-                    // quick add task
-                    const qi=g('tn-qi'),addBtn=g('tn-add-t');
-                    addBtn&&addBtn.addEventListener('click',()=>{const txt=(qi?.value||'').trim();if(!txt){tnAdding=true;re();setTimeout(()=>content.querySelector('#tn-xp-ta')?.focus(),50);return;}tnTasks.push({id:tnuid(),title:txt,done:false,pri:'',due:null,labels:[],created:Date.now()});saveTnTasks();if(qi)qi.value='';re();});
-                    qi&&qi.addEventListener('keydown',e=>{if(e.key==='Enter')addBtn?.click();});
-                    // quick add note
-                    const ni=g('tn-ni'),noteBtn=g('tn-add-n');
-                    noteBtn&&noteBtn.addEventListener('click',()=>{const txt=(ni?.value||'').trim();if(!txt)return;tnNotes.push({id:tnuid(),title:txt,body:'',created:Date.now()});saveTnNotes();if(ni)ni.value='';re();});
-                    ni&&ni.addEventListener('keydown',e=>{if(e.key==='Enter')noteBtn?.click();});
-                    // suggestions
-                    W2.querySelectorAll('[data-tnqi]').forEach(li=>li.addEventListener('click',()=>{
-                        const inp=g('tn-qi');if(!inp)return;
-                        const m={'daily-tasks':_('Daily tasks'),'shopping-list':_('Shopping list'),'payment-reminder':_('Payment reminder')};
-                        inp.value=m[li.dataset.tnqi]||li.dataset.tnqi; inp.focus();
+                    if(body){
+                        body.querySelectorAll('[data-tg]').forEach(b=>b.addEventListener('click',()=>{const t=tdTasks.find(x=>x.id===b.dataset.tg);if(t){t.done=!t.done;saveTdTasks();tdRender();}}));
+                        body.querySelectorAll('[data-td]').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();tdTasks=tdTasks.filter(t=>t.id!==b.dataset.td);saveTdTasks();tdRender();}));
+                        body.querySelectorAll('[data-nd]').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();tdNotes=tdNotes.filter(n=>n.id!==b.dataset.nd);saveTdNotes();tdRender();}));
+                        // quick suggestion clicks
+                        body.querySelectorAll('[data-qi]').forEach(li=>li.addEventListener('click',()=>{tdNewTitle=li.dataset.qi;tdRender();setTimeout(()=>g('td-qi')?.focus(),50);}));
+                        body.querySelectorAll('[data-ni]').forEach(li=>li.addEventListener('click',()=>{tdNewNoteTitle=li.dataset.ni;tdRender();setTimeout(()=>g('td-ni')?.focus(),50);}));
+                    }
+
+                    // footer toolbar buttons
+                    const closePopup=()=>{tdPopup='';tdRender();};
+                    g('td-tpri')&&g('td-tpri').addEventListener('click',()=>{tdPopup=tdPopup==='pri'?'':'pri';tdRender();});
+                    g('td-tcal')&&g('td-tcal').addEventListener('click',()=>{tdPopup=tdPopup==='cal'?'':'cal';tdRender();});
+                    g('td-tlbl')&&g('td-tlbl').addEventListener('click',()=>{tdPopup=tdPopup==='lbl'?'':'lbl';tdRender();});
+                    g('td-tfmt')&&g('td-tfmt').addEventListener('click',()=>{tdPopup=tdPopup==='fmt'?'':'fmt';tdRender();});
+                    g('td-tcolor')&&g('td-tcolor').addEventListener('click',()=>{tdPopup=tdPopup==='color'?'':'color';tdRender();});
+
+                    // input sync
+                    const qi=g('td-qi');
+                    if(qi){qi.addEventListener('input',function(){tdNewTitle=this.value;});qi.addEventListener('keydown',e=>{if(e.key==='Enter')g('td-add-task')?.click();});}
+                    const qd=g('td-qdesc');
+                    if(qd){qd.addEventListener('input',function(){tdNewDesc=this.value;this.style.height='auto';this.style.height=Math.min(this.scrollHeight,80)+'px';});}
+                    const ni=g('td-ni');
+                    if(ni){ni.addEventListener('input',function(){tdNewNoteTitle=this.value;});ni.addEventListener('keydown',e=>{if(e.key==='Enter')g('td-add-note')?.click();});}
+
+                    // priority popup
+                    content.querySelectorAll('[data-sp]').forEach(b=>b.addEventListener('click',()=>{tdNewPri=b.dataset.sp;tdPopup='';tdRender();}));
+
+                    // calendar
+                    g('td-cal-prev')&&g('td-cal-prev').addEventListener('click',e=>{e.stopPropagation();tdCalM--;if(tdCalM<1){tdCalM=12;tdCalY--;}tdRender();});
+                    g('td-cal-next')&&g('td-cal-next').addEventListener('click',e=>{e.stopPropagation();tdCalM++;if(tdCalM>12){tdCalM=1;tdCalY++;}tdRender();});
+                    content.querySelectorAll('[data-gdate]').forEach(b=>b.addEventListener('click',()=>{tdNewDue=b.dataset.gdate;tdPopup='';tdRender();}));
+                    g('td-cal-clear')&&g('td-cal-clear').addEventListener('click',()=>{tdNewDue='';tdPopup='';tdRender();});
+
+                    // labels popup
+                    content.querySelectorAll('[data-sl]').forEach(b=>b.addEventListener('click',()=>{
+                        const l=b.dataset.sl;
+                        if(tdTab==='tasks'){const i=tdNewLabels.indexOf(l);i>=0?tdNewLabels.splice(i,1):tdNewLabels.push(l);}
+                        else{const i=tdNewNoteLabels.indexOf(l);i>=0?tdNewNoteLabels.splice(i,1):tdNewNoteLabels.push(l);}
+                        tdRender();
                     }));
-                    W2.querySelectorAll('[data-tnni]').forEach(li=>li.addEventListener('click',()=>{
-                        const inp=g('tn-ni');if(!inp)return;
-                        const m={'daily-journal':_('Daily journal'),'monthly-plan':_('Monthly plan'),'goals-list':_('Goals list')};
-                        inp.value=m[li.dataset.tnni]||li.dataset.tnni; inp.focus();
+                    g('td-lbl-add')&&g('td-lbl-add').addEventListener('click',()=>{
+                        const v=(g('td-lbl-inp')?.value||'').trim();if(!v||tdAllLabels.includes(v))return;
+                        tdAllLabels.push(v);saveTdLabels();tdRender();
+                    });
+                    g('td-lbl-inp')&&g('td-lbl-inp').addEventListener('keydown',e=>{if(e.key==='Enter')g('td-lbl-add')?.click();});
+
+                    // color popup
+                    content.querySelectorAll('[data-nc]').forEach(b=>b.addEventListener('click',()=>{tdNewNoteColor=b.dataset.nc;tdPopup='';tdRender();}));
+
+                    // format popup
+                    content.querySelectorAll('[data-fmt]').forEach(b=>b.addEventListener('click',()=>{
+                        const fmt=decodeURIComponent(b.dataset.fmt);
+                        const inp=g('td-ni');if(inp){const cur=inp.value;const sel=inp.selectionStart;inp.value=cur.slice(0,sel)+fmt+cur.slice(inp.selectionEnd);inp.focus();inp.selectionStart=inp.selectionEnd=sel+fmt.length;tdNewNoteTitle=inp.value;}
+                        tdPopup='';tdRender();
                     }));
+
+                    // add task button
+                    g('td-add-task')&&g('td-add-task').addEventListener('click',()=>{
+                        const title=(g('td-qi')?.value||tdNewTitle).trim();if(!title)return;
+                        const due=tdNewDue?new Date(tdNewDue).getTime():null;
+                        tdTasks.push({id:tduid(),title,desc:tdNewDesc,done:false,pri:tdNewPri,due,labels:[...tdNewLabels],created:Date.now()});
+                        saveTdTasks();
+                        tdNewTitle='';tdNewDesc='';tdNewPri='';tdNewDue='';tdNewLabels=[];tdPopup='';
+                        tdRender();if(g('td-qi'))g('td-qi').focus();
+                    });
+
+                    // add note button
+                    g('td-add-note')&&g('td-add-note').addEventListener('click',()=>{
+                        const title=(g('td-ni')?.value||tdNewNoteTitle).trim();if(!title)return;
+                        tdNotes.push({id:tduid(),title,body:'',color:tdNewNoteColor,labels:[...tdNewNoteLabels],created:Date.now()});
+                        saveTdNotes();
+                        tdNewNoteTitle='';tdNewNoteLabels=[];tdPopup='';
+                        tdRender();if(g('td-ni'))g('td-ni').focus();
+                    });
+
+                    // dismiss popups on click outside
+                    if(tdPopup){
+                        setTimeout(()=>{
+                            const dismiss=e=>{
+                                const pop=content.querySelector('.td-popup');
+                                const tbtn=content.querySelector('#td-t'+{pri:'pri',cal:'cal',lbl:'lbl',fmt:'fmt',color:'color'}[tdPopup]);
+                                if(pop&&!pop.contains(e.target)&&e.target!==tbtn){
+                                    tdPopup='';D.removeEventListener('mousedown',dismiss,true);tdRender();
+                                }
+                            };
+                            D.addEventListener('mousedown',dismiss,{capture:true,once:false});
+                        },100);
+                    }
                 }
 
-                tnTab=GM_getValue('bi_tn_tab','tasks');
-                tnRender();
+                // Migrate from v4
+                if(!tdTasks.length){
+                    try{const old=JSON.parse(GM_getValue('bi_tasks_v4','[]'));if(old.length){tdTasks=old;saveTdTasks();}}catch(e){}
+                }
+                if(!tdNotes.length){
+                    try{const old=JSON.parse(GM_getValue('bi_notes_v4','[]'));if(old.length){tdNotes=old;saveTdNotes();}}catch(e){}
+                }
+                tdTab=GM_getValue('bi_td_tab','tasks');
+                tdRender();
             }
 
             // ---- Sync ----
