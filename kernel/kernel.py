@@ -463,7 +463,7 @@ if __name__ == "__main__":
     )
 
 # ════════════════════════════════════════════════════════════════
-#  PDF EDITOR ENDPOINTS  (added v7.1)
+#  PDF EDITOR ENDPOINTS — v7.1
 # ════════════════════════════════════════════════════════════════
 
 from io import BytesIO
@@ -490,19 +490,19 @@ except ImportError:
 
 
 class PdfAnnotationItem(BaseModel):
-    type: str            # 'text'|'draw'|'highlight'|'shape'|'image'
-    page: int
-    x: float
-    y: float
-    width:    Optional[float] = None
-    height:   Optional[float] = None
-    text:     Optional[str]   = None
-    color:    Optional[str]   = '#000000'
-    fontSize: Optional[int]   = 13
-    lineWidth:Optional[float] = 2.0
-    points:   Optional[list]  = None
-    opacity:  Optional[float] = 1.0
-    imageData:Optional[str]   = None   # base64 PNG
+    type:      str
+    page:      int
+    x:         float = 0
+    y:         float = 0
+    width:     Optional[float] = None
+    height:    Optional[float] = None
+    text:      Optional[str]   = None
+    color:     Optional[str]   = '#000000'
+    fontSize:  Optional[int]   = 13
+    lineWidth: Optional[float] = 2.0
+    points:    Optional[list]  = None
+    opacity:   Optional[float] = 1.0
+    imageData: Optional[str]   = None
 
 class PdfAnnotateBody(BaseModel):
     pdfData:     str
@@ -511,84 +511,61 @@ class PdfAnnotateBody(BaseModel):
 
 @app.post("/pdf/annotate")
 async def pdf_annotate(body: PdfAnnotateBody):
-    """Burn client-side annotations into a PDF and return the result."""
+    """Burn annotations into PDF and return result."""
     if not _HAS_PYPDF:
-        raise HTTPException(500, "pypdf not installed — run: pip install pypdf")
-
+        raise HTTPException(500, "pypdf not installed")
     raw = _b64.b64decode(body.pdfData)
     reader = PdfReader(BytesIO(raw))
     writer = PdfWriter()
     for p in reader.pages:
         writer.add_page(p)
-
     if _HAS_RL:
         for page_idx in range(len(reader.pages)):
             anns = [a for a in body.annotations if a.page == page_idx]
             if not anns:
                 continue
-
             orig = reader.pages[page_idx]
             pw = float(orig.mediabox.width)
             ph = float(orig.mediabox.height)
-
             buf = BytesIO()
             c = _rl_canvas.Canvas(buf, pagesize=(pw, ph))
-
             for a in anns:
                 try:
-                    hex_c = a.color if a.color and a.color.startswith('#') else '#000000'
-                    fill_c = _HexColor(hex_c)
-                    stroke_c = _HexColor(hex_c)
-
+                    hc = a.color if (a.color or '').startswith('#') else '#000000'
+                    fc = _HexColor(hc)
                     if a.type == 'text' and a.text:
-                        c.setFillColor(fill_c)
-                        fs = a.fontSize or 13
-                        c.setFont('Helvetica', fs)
-                        c.drawString(a.x, ph - a.y - fs, a.text)
-
+                        c.setFillColor(fc)
+                        c.setFont('Helvetica', a.fontSize or 13)
+                        c.drawString(a.x, ph - a.y - (a.fontSize or 13), a.text)
                     elif a.type == 'draw' and a.points and len(a.points) >= 2:
-                        c.setStrokeColor(stroke_c)
+                        c.setStrokeColor(fc)
                         c.setLineWidth(a.lineWidth or 2)
+                        c.setLineCap(1)
                         path = c.beginPath()
                         path.moveTo(a.points[0]['x'], ph - a.points[0]['y'])
                         for pt in a.points[1:]:
                             path.lineTo(pt['x'], ph - pt['y'])
                         c.drawPath(path, stroke=1, fill=0)
-
                     elif a.type == 'highlight' and a.width and a.height:
-                        yy = ph - a.y - a.height
                         c.setFillColor(_HexColor(a.color or '#FFFF00'), alpha=0.35)
-                        c.rect(a.x, yy, a.width, a.height, fill=1, stroke=0)
-
+                        c.rect(a.x, ph - a.y - a.height, a.width, a.height, fill=1, stroke=0)
                     elif a.type == 'shape' and a.width and a.height:
-                        c.setStrokeColor(stroke_c)
+                        c.setStrokeColor(fc)
                         c.setLineWidth(a.lineWidth or 2)
-                        yy = ph - a.y - a.height
-                        c.rect(a.x, yy, a.width, a.height, fill=0, stroke=1)
-
-                    elif a.type == 'image' and a.imageData and a.width and a.height:
-                        import tempfile, os as _os
-                        img_bytes = _b64.b64decode(a.imageData.split(',')[-1])
-                        with tempfile.NamedTemporaryFile(suffix='.png', delete=False) as tf:
-                            tf.write(img_bytes); tmp = tf.name
-                        yy = ph - a.y - a.height
-                        c.drawImage(tmp, a.x, yy, a.width, a.height)
-                        _os.unlink(tmp)
+                        c.rect(a.x, ph - a.y - a.height, a.width, a.height, fill=0, stroke=1)
                 except Exception:
                     pass
-
             c.save()
             buf.seek(0)
             ann_reader = PdfReader(buf)
             writer.pages[page_idx].merge_page(ann_reader.pages[0])
-
     out = BytesIO()
     writer.write(out)
     return {"success": True, "pdfData": _b64.b64encode(out.getvalue()).decode()}
 
 
 class PdfMergeBody(BaseModel):
-    pdfs: List[str]   # list of base64 PDF strings
+    pdfs: List[str]
 
 @app.post("/pdf/merge")
 async def pdf_merge(body: PdfMergeBody):
@@ -606,7 +583,7 @@ async def pdf_merge(body: PdfMergeBody):
 
 class PdfSplitBody(BaseModel):
     pdfData: str
-    splitAt: int = 1   # 1-indexed page to split before
+    splitAt: int = 1
 
 @app.post("/pdf/split")
 async def pdf_split(body: PdfSplitBody):
@@ -620,15 +597,16 @@ async def pdf_split(body: PdfSplitBody):
         w = PdfWriter()
         for i in rng:
             w.add_page(reader.pages[i])
-        o = BytesIO(); w.write(o)
+        o = BytesIO()
+        w.write(o)
         parts.append(_b64.b64encode(o.getvalue()).decode())
     return {"success": True, "parts": parts, "pages_total": n}
 
 
 class PdfRotateBody(BaseModel):
-    pdfData: str
-    page:    int = 0      # 0-indexed; -1 = all pages
-    degrees: int = 90
+    pdfData:  str
+    page:     int = 0
+    degrees:  int = 90
 
 @app.post("/pdf/rotate")
 async def pdf_rotate(body: PdfRotateBody):
@@ -640,7 +618,8 @@ async def pdf_rotate(body: PdfRotateBody):
         if body.page == -1 or i == body.page:
             p.rotate(body.degrees)
         writer.add_page(p)
-    out = BytesIO(); writer.write(out)
+    out = BytesIO()
+    writer.write(out)
     return {"success": True, "pdfData": _b64.b64encode(out.getvalue()).decode()}
 
 
@@ -654,12 +633,13 @@ async def pdf_extract_text(body: PdfExtractBody):
     if _HAS_PDFPLUMBER:
         with _pdfplumber.open(BytesIO(raw)) as pdf:
             for i, pg in enumerate(pdf.pages):
-                words = pg.extract_words() or []
-                tables = pg.extract_tables() or []
                 pages_out.append({
-                    "page": i, "text": pg.extract_text() or "",
-                    "words": [{"text":w["text"],"x0":w["x0"],"y0":w["top"],"x1":w["x1"],"y1":w["bottom"]} for w in words],
-                    "tables": tables, "width": pg.width, "height": pg.height,
+                    "page": i,
+                    "text": pg.extract_text() or "",
+                    "words": [{"text": w["text"], "x0": w["x0"], "y0": w["top"],
+                               "x1": w["x1"], "y1": w["bottom"]} for w in (pg.extract_words() or [])],
+                    "tables": pg.extract_tables() or [],
+                    "width": pg.width, "height": pg.height,
                 })
     elif _HAS_PYPDF:
         reader = PdfReader(BytesIO(raw))
@@ -679,5 +659,6 @@ async def pdf_compress(body: PdfExtractBody):
     for p in reader.pages:
         p.compress_content_streams()
         writer.add_page(p)
-    out = BytesIO(); writer.write(out)
+    out = BytesIO()
+    writer.write(out)
     return {"success": True, "pdfData": _b64.b64encode(out.getvalue()).decode()}
